@@ -3,10 +3,10 @@
     <div class="hero-body">
       <div class="container has-text-centered">
         <p class="title has-text-white-ter">
-          healthtracker
+          Soundjog
         </p>
         <p class="subtitle has-text-white-ter">
-          don't worry, we aren't keeping this silly generic name
+          plan your fitness to the soundtrack of your life
         </p>
       </div>
     </div>

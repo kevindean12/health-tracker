@@ -2,28 +2,28 @@
     <nav class="navbar">
         <div class="container">
             <div class="navbar-brand">
-            <a href="#" class="navbar-item">
-                <strong class="is-size-6">healthtracker</strong>
+            <a href="/" class="navbar-item">
+                <strong class="is-size-6">soundjog</strong>
             </a>
-            <span class="navbar-burger burger">
+            <span :class="{'is-active': isOpen}" @click="isOpen = !isOpen" class="navbar-burger burger">
                 <span></span>
                 <span></span>
                 <span></span>
             </span>
             </div>
-            <div class="navbar-menu">
-            <div class="navbar-end">
-                <router-link class="navbar-item" to="/">Home</router-link>
-                <router-link class="navbar-item" to="/about">About</router-link>
-                <span class="navbar-item">
-                <router-link class="button is-dark" to="/get-started">
-                    <span>Get Started</span>
-                    <span class="icon">
-                    <i class="fas fa-play"></i>
+            <div :class="{'is-active': isOpen}" class="navbar-menu">
+                <div class="navbar-end">
+                    <router-link class="navbar-item" to="/" active-class="is-current" exact>Home</router-link>
+                    <router-link class="navbar-item" to="/about" active-class="is-current">About</router-link>
+                    <span class="navbar-item">
+                        <router-link class="button is-dark" to="login">
+                            <span>Login</span>
+                            <span class="icon">
+                            <i class="fas fa-play"></i>
+                            </span>
+                        </router-link>
                     </span>
-                </router-link>
-                </span>
-            </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -31,10 +31,15 @@
 
 <script>
 export default {
-    
+    data: () => ({
+        isOpen: false
+    }),
 }
 </script>
 
 <style>
-
+.is-current{
+    font-weight: bold;
+    color: cornflowerblue;
+}
 </style>
