@@ -4,7 +4,7 @@
       <div class="field">
         <label class="label">Email</label>
         <p class="control has-icons-left has-icons-right">
-          <input class="input" type="email" placeholder="Email">
+          <input class="input" type="email" maxlength="254" required placeholder="Email">
           <span class="icon is-small is-left">
             <i class="fas fa-envelope"></i>
           </span>
@@ -24,11 +24,18 @@
       </div>
       <div class="field">
         <p class="control">
-          <button class="button is-success">
-            Login
-          </button>
+          <!-- <button class="button is-success">
+              Login
+          </button> -->
+          <router-link class="button is-sucess" to="/log">Go to Log</router-link>
         </p>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  
+}
+</script>

@@ -6,7 +6,7 @@
           Soundjog
         </p>
         <p class="subtitle has-text-white-ter">
-          plan your fitness to the soundtrack of your life
+          because workouts should be measured in podcast-minutes
         </p>
       </div>
     </div>
