@@ -1,38 +1,39 @@
 <template>
     <div class="container">
-    <div class="card" v-for="workout in CurrentWorkouts" :key="workout.day">
-        <header class="card-header">
-            <p class="card-header-title">
-            {{workout.day}} -- {{workout.exerciseType}}
-            </p>
-            <a href="#" class="card-header-icon" aria-label="more options">
-                <span class="icon">
-                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+        <div class="title is-2">My Workouts This Week</div>
+        <div class="card" v-for="workout in CurrentWorkouts" :key="workout.day">
+            <header class="card-header">
+                <p class="card-header-title">
+                Day {{workout.day}}. {{workout.exerciseType}}
+                </p>
+                <p class="card-header-title is-pulled-right">Length: {{workout.time}} minutes</p>
+                <span class="icon is-large">
+                    <i v-if="workout.exerciseType=='Strength'" class="fas fa-dumbbell"></i>
+                    <i v-else class="fas fa-running"></i>
                 </span>
-            </a>
-        </header>
-        <div class="card-content">
-            <div class="content">
-            Playlist:
-                <!-- <ol>
-                    <li v-for="track in workout.workoutPlaylist" :key="track">
-                        {{track.podTitle}}: {{track.episode}}
-                    </li>
-                </ol> -->
+            </header>
+            <div class="card-content">
+                <div class="content">
+                Playlist:
+                    <ol>
+                        <li v-for="track in workout.workoutPlaylist" :key="track">
+                            {{track.podTitle}}: {{track.episode}}
+                        </li>
+                    </ol>
+                </div>
             </div>
+            <footer class="card-footer">
+                <a href="#" class="card-footer-item">Update Progress</a>
+                <a href="#" class="card-footer-item">Delete</a>
+            </footer>
         </div>
-        <footer class="card-footer">
-            <a href="#" class="card-footer-item">Update Progress</a>
-            <a href="#" class="card-footer-item">Delete</a>
-        </footer>
-    </div>
   </div>
 </template>
 
 <script>
-import {Exercises, Playlist, CurrentWorkouts, WeeklyGoal, calculateWorkout} from "../models/Log.js";
+import {CurrentWorkouts} from "../models/Log.js";
 export default {
-    name: 'Home',
+    name: 'ExerciseLog',
     data: () => ({
         CurrentWorkouts
     }),

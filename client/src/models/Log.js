@@ -33,17 +33,19 @@ export const CurrentWorkouts = calculateWorkout(WeeklyGoal.cardioMinutes, Weekly
 
 export function calculateWorkout(weeklyCardio, weeklyStrength, days, playlist){
     const secondsPerDay = (weeklyCardio*60 + weeklyStrength*60)/days;
+    // const cardioDays = Math.floor(days/2);
+    // const strengthDays = days - cardioDays;
     const workouts = [];
     let strength = true;
     for(let i = 0; i < days; i++){
         const workout = new Object();
         workout.day = i+1;
         if(strength){
-            workout.exerciseType = "strength";
+            workout.exerciseType = "Strength";
             strength = !strength;
         } 
         else {
-            workout.exerciseType = "cardio";
+            workout.exerciseType = "Cardio";
             strength = !strength;
         }
         workout.workoutPlaylist = [];
@@ -55,6 +57,8 @@ export function calculateWorkout(weeklyCardio, weeklyStrength, days, playlist){
                 break;
             }
         }
+        workout.time = secondsPerDay/60;
+        workouts.push(workout);
     }
     return workouts;
 
