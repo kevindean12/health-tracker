@@ -1,10 +1,11 @@
 <template>
   <div class="login">
-    <div class="container">
+    <form class="container" @submit.prevent="login">
+      {{error}}
       <div class="field">
         <label class="label">Email</label>
         <p class="control has-icons-left has-icons-right">
-          <input class="input" type="email" maxlength="254" required placeholder="Email">
+          <input class="input" type="email" maxlength="254" placeholder="Email" v-model="email">
           <span class="icon is-small is-left">
             <i class="fas fa-envelope"></i>
           </span>
@@ -16,7 +17,7 @@
       <div class="field">
         <label class="label">Password</label>
         <p class="control has-icons-left">
-          <input class="input" type="password" placeholder="Password">
+          <input class="input" type="password" placeholder="Password" v-model="password">
           <span class="icon is-small is-left">
             <i class="fas fa-lock"></i>
           </span>
@@ -24,18 +25,33 @@
       </div>
       <div class="field">
         <p class="control">
-          <!-- <button class="button is-success">
+          <button class="button is-success">
               Login
-          </button> -->
-          <router-link class="button is-sucess" to="/log">Go to Log</router-link>
+          </button>
+          <!-- <router-link class="button is-sucess" to="/log">Login</router-link> -->
         </p>
       </div>
-    </div>
+    </form>
   </div>
 </template>
 
 <script>
+import {Login} from "../models/Users";
 export default {
-  
+  data: () => ({
+    email: '',
+    password: '',
+    error: ''
+  }),
+  methods: {
+    login(){
+      try {
+        Login(this.email, this.password);
+        this.$router.push('/log');
+      } catch (error) {
+        this.error = error;
+      }
+    }
+  }
 }
 </script>

@@ -2,7 +2,9 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import Register from '../views/Register.vue';
-import ExerciseLog from '../views/ExerciseLog.vue'
+import ExerciseLog from '../views/ExerciseLog.vue';
+import Planner from '../views/Planner.vue';
+import { CurrentUser } from '../models/Users';
 
 Vue.use(VueRouter)
 
@@ -33,7 +35,13 @@ const routes = [
   {
     path: '/log',
     name: 'ExerciseLog',
-    component: ExerciseLog
+    component: ExerciseLog,
+    meta: {needsAuth: true},
+  },
+  {
+    path: '/planner',
+    name: 'Planner',
+    component: Planner
   }
 ]
 
@@ -41,6 +49,11 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
-})
+});
+
+router.beforeEach((to, from, next) => {
+  if(to.meta.needsAuth && !CurrentUser) next({name: 'Login'});
+  else next();
+});
 
 export default router
