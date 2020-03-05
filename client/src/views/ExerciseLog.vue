@@ -1,29 +1,6 @@
 <template>
     <div class="container">
         <div class="title is-2">My Workouts This Week</div>
-        <!-- <div class="dropdown" :class="{'is-active': isOpen}" v-for="(workout, i) in WorkoutSchedule" :key="workout.exercises">
-            <div class="dropdown-trigger">
-                <button class="button" @click="isOpen = !isOpen" aria-haspopup="true" aria-controls="dropdown-menu2">
-                <span> Day {{i+1}} </span>
-                <span class="icon is-small">
-                    <i class="fas fa-angle-down" aria-hidden="true"></i>
-                </span>
-                </button>
-            </div>
-            <div class="dropdown-menu" id="dropdown-menu2" role="menu">
-                <div class="dropdown-content">
-                    <div class="dropdown-item" v-for="exercise in workout.exercises" :key="exercise.name">
-                        <span>
-                            {{exercise.name}} | Length: {{exercise.time}} minutes
-                            <span class="icon is-large">
-                                <i v-if="exercise.category=='Strength'" class="fas fa-dumbbell"></i>
-                                <i v-else class="fas fa-running"></i>
-                            </span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div> -->
         <div class="card" v-for="(workout, i) in WorkoutSchedule" :key="workout.exercises">
             <header class="card-header">
                 <span class="card-header-title">
@@ -43,21 +20,42 @@
                 </p>
             </div>
             <footer class="card-footer">
-                <a href="#" class="card-footer-item">Update Progress</a>
-                <a href="#" class="card-footer-item">Delete</a>
+                <div class="dropdown" :class="{'is-active': isOpen}">
+                    <div class="dropdown-trigger">
+                        <button class="button" @click="isOpen = !isOpen" aria-haspopup="true" aria-controls="dropdown-menu2">
+                        <span>Update Progress</span>
+                        <span class="icon is-small">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                        </button>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                        <div class="dropdown-content">
+                            <div class="dropdown-item">
+                                Completed <input type="number" class="input" placeholder="0"> minutes of: 
+                                <div class="select">
+                                    <select>
+                                        <option v-for="ex in workout.exercises" :key="ex.name">{{ex.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </footer>
         </div>
   </div>
 </template>
 
 <script>
-import {CurrentGoal, WorkoutSchedule} from "../models/Log.js";
+import {WorkoutSchedule} from "../models/Log.js";
+import {CurrentGoal} from "../models/Planner.js";
 export default {
     name: 'ExerciseLog',
     data: () => ({
         CurrentGoal,
         WorkoutSchedule,
-        isOpen: true,
+        isOpen: false,
     }),
 }
 </script>
