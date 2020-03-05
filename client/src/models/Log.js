@@ -1,68 +1,102 @@
-export const Exercises = [
-    {
-        name: 'Jog',
-        description: 'A moderately paced run.',
-        minutes: 0,
-        date: new Date("2020-3-3")
+class Exercise {
+    constructor(name, description, category, mins){
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.time = mins;
     }
-];
-//fetch using ListenNotes
-//duration is in seconds (and comes that way from ListenNotes)
-export const Playlist = [
-    {
-        podTitle: 'FiveThirtyEight Politics',
-        episode: 'What\'s At Stake On Super Tuesday',
-        duration: 3332,
-        remaining: 3332
-    },
-    {
-        podTitle: 'Football Weekly',
-        episode: 'Liverpool\'s shock loss, more City silverware and German banners - Football Weekly',
-        duration: 4000,
-        remaining: 4000
+}
+
+class Goal{
+    constructor(cardioMinutes, strengthMinutes, days, exercises){
+        this.cardioMinutes = cardioMinutes;
+        this.strengthMinutes = strengthMinutes;
+        this.days = days;
+        this.exercises = exercises;
     }
-];
+}
 
-export const WeeklyGoal = {
-    cardioMinutes: 70,
-    strengthMinutes: 50,
-    days: 5
-};
+class Workout {
+    constructor(exercises, playlist){
+        this.playlist = playlist;
+        this.exercises = exercises;
+    }
 
-export const CurrentWorkouts = calculateWorkout(WeeklyGoal.cardioMinutes, WeeklyGoal.strengthMinutes, WeeklyGoal.days, Playlist);
+    get time(){
+        let count = 0;
+        for(let i = 0; i < this.exercises.length; i++){
+            count += this.exercises[i].time;
+        }
+        return count;
+    }
+}
 
-export function calculateWorkout(weeklyCardio, weeklyStrength, days, playlist){
-    const secondsPerDay = (weeklyCardio*60 + weeklyStrength*60)/days;
-    // const cardioDays = Math.floor(days/2);
-    // const strengthDays = days - cardioDays;
-    const workouts = [];
-    let strength = true;
-    for(let i = 0; i < days; i++){
-        const workout = new Object();
-        workout.day = i+1;
-        if(strength){
-            workout.exerciseType = "Strength";
-            strength = !strength;
-        } 
+//a node for a linked list containing information about the podcast episode
+class Podcast{
+    constructor(title, episodeTitle, durationSeconds){
+        this.title = title;
+        this.episodeTitle = episodeTitle;
+        this.duration = durationSeconds;
+        this.remaining = durationSeconds;
+        this.next = null;
+        this.prev = null;
+    }
+}
+
+//a linked list representing a playlist
+class Playlist {
+    constructor(user, playlistName){
+        this.user = user;
+        this.name = playlistName;
+        this.head = null;
+    }
+
+    size(){
+        let temp = this.head;
+        let count = 0;
+        while(temp != null){
+            temp = temp.next;
+            count++;
+        }
+        return count;
+    }
+
+    add(episode){
+        if(this.head == null){
+            this.head = episode;
+        }
         else {
-            workout.exerciseType = "Cardio";
-            strength = !strength;
-        }
-        workout.workoutPlaylist = [];
-        for(let j = 0; j < playlist.length; j++){
-            let seconds = secondsPerDay;
-            workout.workoutPlaylist.push(playlist[j]);
-            seconds -= playlist[j].duration;
-            if(seconds <= 0){
-                break;
+            let temp = this.head;
+            while(temp.next != null){
+                temp = temp.next;
             }
+            temp.next = episode;
+            episode.prev = temp;
         }
-        workout.time = secondsPerDay/60;
-        workouts.push(workout);
+        return this;
     }
-    return workouts;
 
 }
+
+const Exercises = [
+    new Exercise("Jog", "A moderately paced run.", "Cardio", 15),
+    new Exercise("Pushups", "Arm and chest workout using only body weight.", "Strength", 10)
+];
+
+
+//fetch episodes using ListenNotes
+//duration is in seconds (and comes that way from ListenNotes)
+const UserPlaylist = new Playlist("Kevin", "Default")
+    .add(new Podcast("FiveThirtyEight Politics", "What's At Stake On Super Tuesday", 3332))
+    .add(new Podcast("Football Weekly", "Liverpool's shock loss, more City silverware and German banners - Football Weekly", 4000));
+
+
+
+export const CurrentGoal = new Goal(70, 50, 5, Exercises);
+export const WorkoutSchedule = [new Workout(Exercises, UserPlaylist)];
+
+
+
 
 
 
