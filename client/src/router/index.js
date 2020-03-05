@@ -4,6 +4,8 @@ import Home from '../views/Home.vue';
 import Register from '../views/Register.vue';
 import ExerciseLog from '../views/ExerciseLog.vue';
 import Planner from '../views/Planner.vue';
+import Login from '../views/Login.vue';
+import Profile from '../views/Profile.vue';
 import { CurrentUser } from '../models/Users';
 
 Vue.use(VueRouter)
@@ -25,7 +27,7 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/Login.vue')
+    component: Login
   },
   {
     path: '/register',
@@ -42,6 +44,12 @@ const routes = [
     path: '/planner',
     name: 'Planner',
     component: Planner
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
+    meta: {needsAuth: true},
   }
 ]
 
