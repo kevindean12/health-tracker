@@ -1,4 +1,5 @@
-
+import { token } from "../models/listenapi";
+const unirest = require('unirest');
 export class Exercise {
     constructor(name, description, category, mins){
         this.name = name;
@@ -91,3 +92,17 @@ export const UserPlaylist = new Playlist("Kevin", "Default")
     .add(new Podcast("Football Weekly", "Liverpool's shock loss, more City silverware and German banners - Football Weekly", 4000));
 
 export const CurrentGoal = new Goal(70, 50, 5, Exercises);
+
+export async function searchPodcasts(keywords){
+    //TODO need to sanitize user input first...
+    const terms = keywords.split(' ');
+    if(terms.length > 7) throw Error('Too many search terms');
+    let input = '';
+    for(let i = 0; i < terms.length-1; i++){
+        input += `${terms[i]}%20`;
+    }
+    input += terms[terms.length-1];
+    const response = await unirest.get(`https://listen-api.listennotes.com/api/v2/search?q=${input}&sort_by_date=0&type=episode&offset=0&only_in=title%2Cdescription&language=English&safe_mode=0`)
+        .header('X-ListenAPI-Key', token);
+    console.log(response.toJSON());
+}

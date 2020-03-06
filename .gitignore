@@ -2,6 +2,8 @@
 # Created by https://www.gitignore.io/api/node,vuejs,dotenv,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=node,vuejs,dotenv,visualstudiocode
 
+client/src/models/listenapi.js
+
 ### dotenv ###
 .env
 
