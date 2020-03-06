@@ -8,11 +8,10 @@
 
 <script>
 import Nav from '@/components/Nav.vue';
-import Footer from '@/components/Footer.vue';
+import {CurrentUser} from '@/models/Users';
 export default {
   components: {
     Nav,
-    Footer
   }
 }
 </script>

@@ -1,4 +1,4 @@
-const Users = [
+export const Users = [
     {Name: 'Kevin', Password: '2020', Email: 'kevin@notmail.com'},
     {Name: 'Admin', Password: 'admin', Email: 'admin@soundjog.com'}
 ];

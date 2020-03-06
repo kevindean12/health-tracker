@@ -6,7 +6,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-header-title">
-                            Plan your workout
+                            <router-link class="navbar-item" to="/planner">Plan your workout</router-link>
                         </div>
                     </div>
                     <div class="card-content">
@@ -22,14 +22,12 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-header-title">
-                            Log your exercises
+                            <router-link class="navbar-item" to="/exerciselog">Log your exercise</router-link>
                         </div>
                     </div>
                     <div class="card-content">
                         <ul>
-                            <li>Set a weekly exercise goal.</li>
-                            <li>Make a playlist.</li>
-                            <li>Get moving.</li>
+                            <li>Update time spent on your planned exercises.</li>
                         </ul>
                     </div>
                 </div>
@@ -38,14 +36,12 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-header-title">
-                            Edit your profile
+                            <a href="#">Edit your profile</a> 
                         </div>
                     </div>
                     <div class="card-content">
                         <ul>
-                            <li>Set a weekly exercise goal.</li>
-                            <li>Make a playlist.</li>
-                            <li>Get moving.</li>
+                            <li>Change password.</li>
                         </ul>
                     </div>
                 </div>

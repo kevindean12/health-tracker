@@ -14,8 +14,11 @@
             <div :class="{'is-active': isOpen}" class="navbar-menu">
                 <div class="navbar-end">
                     <router-link class="navbar-item" to="/" active-class="is-current" exact>Home</router-link>
-                    <router-link class="navbar-item" to="/about" active-class="is-current">About</router-link>
                     <router-link class="navbar-item" to="/register" active-class="is-current">Register</router-link>
+                    <router-link class="navbar-item" to="/about" active-class="is-current">About</router-link>
+                    <router-link class="navbar-item" to="/planner" active-class="is-current">Plan</router-link>
+                    <router-link class="navbar-item" to="/profile" active-class="is-current">My Profile</router-link>
+                    <router-link class="navbar-item" to="/exerciselog" active-class="is-current">Log</router-link>
                     <span class="navbar-item">
                         <router-link class="button is-dark" to="login">
                             <span>Login</span>
@@ -33,7 +36,7 @@
 <script>
 export default {
     data: () => ({
-        isOpen: false
+        isOpen: false,
     }),
 }
 </script>

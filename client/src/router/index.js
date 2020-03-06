@@ -35,7 +35,7 @@ const routes = [
     component: Register
   },
   {
-    path: '/log',
+    path: '/exerciselog',
     name: 'ExerciseLog',
     component: ExerciseLog,
     meta: {needsAuth: true},
@@ -43,7 +43,8 @@ const routes = [
   {
     path: '/planner',
     name: 'Planner',
-    component: Planner
+    component: Planner,
+    meta: {needsAuth: true},
   },
   {
     path: '/profile',
