@@ -53,7 +53,7 @@
               <div class="field">
                 <div class="control">
                   <label class="label">Search podcasts by keyword</label>
-                  <input type="text" placeholder="17th century board games" v-model="searchWords">
+                  <input type="search" placeholder="17th century board games" v-model="searchWords">
                 </div>
               </div>
               <div class="field">
