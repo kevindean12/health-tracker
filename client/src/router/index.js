@@ -6,6 +6,8 @@ import ExerciseLog from '../views/ExerciseLog.vue';
 import Planner from '../views/Planner.vue';
 import Login from '../views/Login.vue';
 import Profile from '../views/Profile.vue';
+import Admin from '../views/Admin.vue';
+import AdminLogin from '../views/AdminLogin';
 import { CurrentUser } from '../models/Users';
 
 Vue.use(VueRouter)
@@ -51,7 +53,22 @@ const routes = [
     name: 'Profile',
     component: Profile,
     meta: {needsAuth: true},
-  }
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin,
+    beforeEnter: (to, from, next) => {
+      if(!CurrentUser) next({name: 'AdminLogin'});
+      else if(CurrentUser.Email != 'admin@soundjog.com') next({name: 'Profile'});
+      else next();
+    }
+  },
+  {
+    path: '/adminlogin',
+    name: 'AdminLogin',
+    component: AdminLogin,
+  },
 ]
 
 const router = new VueRouter({
@@ -59,6 +76,8 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
+
+
 
 router.beforeEach((to, from, next) => {
   if(to.meta.needsAuth && !CurrentUser) next({name: 'Login'});

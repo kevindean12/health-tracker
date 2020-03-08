@@ -7,7 +7,7 @@
         <div class="card-header-title has-text-centered">Set weekly goal</div>
       </div>
       <div class="card-content">
-        <form action="">
+        <form>
           <div class="field">
             <div class="control">
               <label class="label">Select minutes per day of cardio</label> 

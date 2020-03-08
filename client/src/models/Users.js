@@ -12,3 +12,10 @@ export function Login(email, password){
 
     return CurrentUser = user;
 }
+
+export function AdminLogin(email, password){
+    if(email != 'admin@soundjog.com') throw Error('Invalid credentials');
+    const user = Users.find(x => x.Email == 'admin@soundjog.com');
+    if(user.Password != password) throw Error('Invalid credentials');
+    return CurrentUser = user;
+}
