@@ -46,7 +46,50 @@
                   <p class="content"><strong>Suggested time: </strong> {{exercise.time}} minutes</p>
               </div>
               <footer class="card-footer">
-                <a href="#" class="card-footer-item">Edit</a>
+                <form class="card-footer-item">
+                    
+                    <div :class="{'is-active': isInvisible}" class="dropdown">
+                        <a @click.prevent="isInvisible = !isInvisible" class="dropdown-trigger">Edit</a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-content">
+                                <div class="dropdown-item">
+                                    <div class="field">
+                                        <div class="control">
+                                            <label class="label">
+                                                Name
+                                            </label>
+                                            <input type="text" placeholder="Name">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="control">
+                                            <label class="label">
+                                                Description
+                                            </label>
+                                            <input type="text" placeholder="Name">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="control">
+                                            <label class="label">
+                                                Category
+                                            </label>
+                                            <input type="text" placeholder="Name">
+                                        </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="control">
+                                            <label class="label">
+                                                Time
+                                            </label>
+                                            <input type="number" placeholder="Name">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
                 <a href="#" @click.prevent="deleteExercise(i)" class="card-footer-item">Delete</a>
               </footer>
           </div>
@@ -61,7 +104,8 @@ export default {
         name: '',
         description: '',
         category: '',
-        time: 0
+        time: 0,
+        isInvisible: true,
     }),
     methods: {
         add() {
