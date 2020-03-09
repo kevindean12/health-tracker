@@ -97,7 +97,7 @@
                 </div>
               </div>
               <p class="has-text-centered"><strong>Your playlist</strong></p>
-              <div class="columns" v-for="pod in UserPlaylist" :key="pod.title">
+              <div class="columns" v-for="(pod, i) in UserPlaylist" :key="pod.title">
                 <div class="column is-5">
                   <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
                 </div>
@@ -106,7 +106,7 @@
                 </div>
                 <div class="column is-2">
                   <div class="field">
-                    <div class="control"><button @click.prevent="show" class="button">Add</button></div>
+                    <div class="control"><button @click.prevent="addToWorkout(i)" class="button">Add</button></div>
                   </div>
                 </div>
               </div>
@@ -147,7 +147,7 @@ export default {
     minsStrength: 0,
     daysToExercise: 0,
     searchWords: '',
-    exercises: [],
+    workoutExercises: [],
     workouts: [],
     searchResults: [],
     error: '',
@@ -172,8 +172,9 @@ export default {
       out_pod.coverArt = in_pod.image;
       this.UserPlaylist.push(out_pod);
     },
-    addToWorkout(){
-
+    addToWorkout(index){
+      this.workoutExercises.push(this.UserPlaylist[index]);
+      console.log(this.workoutExercises);
     },
 
     
