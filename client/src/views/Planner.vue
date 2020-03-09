@@ -11,7 +11,7 @@
           <div class="field">
             <div class="control">
               <label class="label">Select minutes per day of cardio</label> 
-              <input type="number" placeholder="0">
+              <input type="number" placeholder="0" v-model="minsCardio">
             </div>
           </div>
           <div class="field">
@@ -19,13 +19,13 @@
               <label class="label">
                 Select minutes per day of strength
               </label>
-              <input type="number" placeholder="0">
+              <input type="number" placeholder="0" v-model="minsStrength">
             </div>
           </div>
           <div class="field">
             <div class="control">
               <label class="label">How many days will you exercise this week?</label> 
-              <input type="number" placeholder="0">
+              <input type="number" placeholder="0" v-model="daysToExercise">
             </div>
           </div>
           <div class="field">
@@ -81,12 +81,42 @@
           <div class="card-content">
             <p>Add exercises</p>
             <p>Your workout playlist will populate automatically from your user playlist, but you can also make changes to it:</p>
+            <form>
+              <div class="field">
+                <div class="control">
+                  <div class="select">
+                    <select>
+                      <option v-for="exercise in Exercises" :key="exercise.name" :value="exercise.name"> {{exercise.name}} </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="field">
+                <div class="control">
+                  <input type="number" placeholder="0"> minutes
+                </div>
+              </div>
+              <p class="has-text-centered"><strong>Your playlist</strong></p>
+              <div class="columns" v-for="pod in UserPlaylist" :key="pod.title">
+                <div class="column is-5">
+                  <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
+                </div>
+                <div class="column is-5">
+                  <div> {{pod.episodeTitle}} </div>
+                </div>
+                <div class="column is-2">
+                  <div class="field">
+                    <div class="control"><button @click.prevent="show" class="button">Add</button></div>
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
     </div>
       <div class="search-results">
-        <div class="columns" v-for="pod in searchResults" :key="pod.podcast_title_original" >
+        <div class="columns" v-for="(pod, i) in searchResults" :key="pod.podcast_title_original" >
           <div class="column is-2">
             <p> <strong>{{pod.podcast_title_original}}</strong> </p>
           </div>
@@ -102,7 +132,7 @@
             {{pod.description_original}}
           </div>
           <div class="column is-1">
-            <button class="button">Add</button>
+            <button @click.prevent="addToPlaylist(i)" class="button">Add</button>
           </div>
         </div>
       </div>
@@ -110,17 +140,19 @@
 </template>
 
 <script>
-import { searchPodcasts } from "../models/Planner";
+import { searchPodcasts, Exercises, UserPlaylist, Podcast } from "../models/Planner";
 export default {
   data: () => ({
     minsCardio: 0,
     minsStrength: 0,
+    daysToExercise: 0,
     searchWords: '',
     exercises: [],
-    userPlaylist: [],
     workouts: [],
     searchResults: [],
     error: '',
+    Exercises,
+    UserPlaylist
   }),
   methods: {
     createGoal(minsCardio, minsStrength, days, exercises){
@@ -133,6 +165,15 @@ export default {
       } catch (error) {
         this.error = error;
       }
+    },
+    addToPlaylist(resultIndex){
+      const in_pod = this.searchResults[resultIndex];
+      const out_pod = new Podcast(in_pod.podcast_title_original, in_pod.title_original, in_pod.audio_length_sec);
+      out_pod.coverArt = in_pod.image;
+      this.UserPlaylist.push(out_pod);
+    },
+    addToWorkout(){
+
     },
 
     
@@ -148,5 +189,8 @@ export default {
   overflow: scroll;
   max-height: 12rem;
 }
-
+img {
+  float: left;
+  margin-right: 5em;
+}
 </style>

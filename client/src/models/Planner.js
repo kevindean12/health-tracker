@@ -40,45 +40,13 @@ export class Podcast{
         this.episodeTitle = episodeTitle;
         this.duration = durationSeconds;
         this.remaining = durationSeconds;
+        this.coverArt = '';
         this.next = null;
         this.prev = null;
     }
 }
 
-//a linked list representing a playlist
-export class Playlist {
-    constructor(user, playlistName){
-        this.user = user;
-        this.name = playlistName;
-        this.head = null;
-    }
 
-    size(){
-        let temp = this.head;
-        let count = 0;
-        while(temp != null){
-            temp = temp.next;
-            count++;
-        }
-        return count;
-    }
-
-    add(episode){
-        if(this.head == null){
-            this.head = episode;
-        }
-        else {
-            let temp = this.head;
-            while(temp.next != null){
-                temp = temp.next;
-            }
-            temp.next = episode;
-            episode.prev = temp;
-        }
-        return this;
-    }
-
-}
 
 export const Exercises = [
     new Exercise("Jog", "A moderately paced run.", "Cardio", 15),
@@ -87,9 +55,10 @@ export const Exercises = [
 
 //fetch episodes using ListenNotes
 //duration is in seconds (and comes that way from ListenNotes)
-export const UserPlaylist = new Playlist("Kevin", "Default")
-    .add(new Podcast("FiveThirtyEight Politics", "What's At Stake On Super Tuesday", 3332))
-    .add(new Podcast("Football Weekly", "Liverpool's shock loss, more City silverware and German banners - Football Weekly", 4000));
+export const UserPlaylist = [
+    new Podcast("FiveThirtyEight Politics", "What's At Stake On Super Tuesday", 3332),
+    new Podcast("Football Weekly", "Liverpool's shock loss, more City silverware and German banners - Football Weekly", 4000)
+];
 
 export const CurrentGoal = new Goal(70, 50, 5, Exercises);
 
