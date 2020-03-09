@@ -1,8 +1,8 @@
 <template>
     <div class="container">
         <div class="title is-3">Welcome, {{CurrentUser.Name}} </div>
-        <div class="tile is-ancestor">
-            <div class="tile">
+        <div class="columns">
+            <div class="column">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-header-title">
@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </div>
-            <div class="tile">
+            <div class="column">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-header-title">
@@ -32,11 +32,11 @@
                     </div>
                 </div>
             </div>
-            <div class="tile">
+            <div class="column">
                 <div class="card">
                     <div class="card-header">
                         <div class="card-header-title">
-                            <a href="#">Edit your profile</a> 
+                             Edit your profile
                         </div>
                     </div>
                     <div class="card-content">

@@ -48,7 +48,7 @@
             <div class="card-header-title has-text-centered">Create a playlist</div>
           </div>
           <div class="card-content">
-            <form @submit.prevent="search(searchWords)">
+            <form @submit.prevent="search(searchWords,0)">
               {{error}}
               <div class="field">
                 <div class="control">
@@ -85,6 +85,27 @@
         </div>
       </div>
     </div>
+      <div class="search-results">
+        <div class="columns" v-for="pod in searchResults" :key="pod.podcast_title_original" >
+          <div class="column is-2">
+            <p> <strong>{{pod.podcast_title_original}}</strong> </p>
+          </div>
+          <div class="column is-1">
+            <div class="content">
+              <p>{{Math.floor(pod.audio_length_sec/60)}}:{{pod.audio_length_sec%60}}</p>
+            </div>
+          </div>
+          <div class="column is-4">
+            {{pod.title_original}}
+          </div>
+          <div class="column is-4 has-overflow">
+            {{pod.description_original}}
+          </div>
+          <div class="column is-1">
+            <button class="button">Add</button>
+          </div>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -105,13 +126,15 @@ export default {
     createGoal(minsCardio, minsStrength, days, exercises){
 
     },
-    search(keywords){
+    async search(keywords, page){
       try {
-        searchPodcasts(keywords)
+        const results = await searchPodcasts(keywords, page);
+        this.searchResults = results.body.results;
       } catch (error) {
         this.error = error;
       }
     },
+
     
   }
 }
@@ -121,4 +144,9 @@ export default {
 #listen-notes {
   max-width: 15rem;
 }
+.has-overflow {
+  overflow: scroll;
+  max-height: 12rem;
+}
+
 </style>

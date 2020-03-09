@@ -93,7 +93,7 @@ export const UserPlaylist = new Playlist("Kevin", "Default")
 
 export const CurrentGoal = new Goal(70, 50, 5, Exercises);
 
-export async function searchPodcasts(keywords){
+export async function searchPodcasts(keywords, page){
     //TODO need to sanitize user input first...
     const terms = keywords.split(' ');
     if(terms.length > 7) throw Error('Too many search terms');
@@ -102,7 +102,7 @@ export async function searchPodcasts(keywords){
         input += `${terms[i]}%20`;
     }
     input += terms[terms.length-1];
-    const response = await unirest.get(`https://listen-api.listennotes.com/api/v2/search?q=${input}&sort_by_date=0&type=episode&offset=0&only_in=title%2Cdescription&language=English&safe_mode=0`)
+    let response = await unirest.get(`https://listen-api.listennotes.com/api/v2/search?q=${input}&sort_by_date=0&type=episode&offset=${page}&only_in=title%2Cdescription&language=English&safe_mode=0`)
         .header('X-ListenAPI-Key', token);
-    console.log(response.toJSON());
+    return await response.toJSON();
 }
