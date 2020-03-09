@@ -46,10 +46,9 @@
                   <p class="content"><strong>Suggested time: </strong> {{exercise.time}} minutes</p>
               </div>
               <footer class="card-footer">
-                <form class="card-footer-item">
-                    
-                    <div :class="{'is-active': isInvisible}" class="dropdown">
-                        <a @click.prevent="isInvisible = !isInvisible" class="dropdown-trigger">Edit</a>
+                <form class="card-footer-item" @submit.prevent="edit(i)">
+                    <div :id="'card-number-'+i" class="dropdown">
+                        <a @click.prevent="makeActive(i)" class="dropdown-trigger">Edit</a>
                         <div class="dropdown-menu">
                             <div class="dropdown-content">
                                 <div class="dropdown-item">
@@ -58,7 +57,7 @@
                                             <label class="label">
                                                 Name
                                             </label>
-                                            <input type="text" placeholder="Name">
+                                            <input type="text" placeholder="Name" v-model="editExercise.name">
                                         </div>
                                     </div>
                                     <div class="field">
@@ -66,15 +65,19 @@
                                             <label class="label">
                                                 Description
                                             </label>
-                                            <input type="text" placeholder="Name">
+                                            <input type="text" placeholder="Name" v-model="editExercise.description">
                                         </div>
                                     </div>
                                     <div class="field">
                                         <div class="control">
-                                            <label class="label">
-                                                Category
+                                            <label class="radio">
+                                                <input type="radio" name="category" v-model="editExercise.category" value="Cardio">
+                                                Cardio
                                             </label>
-                                            <input type="text" placeholder="Name">
+                                            <label class="radio">
+                                                <input type="radio" name="category" v-model="editExercise.category" value="Strength" checked>
+                                                Strength
+                                            </label>
                                         </div>
                                     </div>
                                     <div class="field">
@@ -82,8 +85,11 @@
                                             <label class="label">
                                                 Time
                                             </label>
-                                            <input type="number" placeholder="Name">
+                                            <input type="number" placeholder="Name" v-model="editExercise.time">
                                         </div>
+                                    </div>
+                                    <div class="field">
+                                        <div class="control"><button class="button is-success">Submit</button></div>
                                     </div>
                                 </div>
                             </div>
@@ -98,6 +104,7 @@
 
 <script>
 import { Exercises, Exercise } from "../models/Planner";
+
 export default {
     data: () => ({
         Exercises,
@@ -105,7 +112,7 @@ export default {
         description: '',
         category: '',
         time: 0,
-        isInvisible: true,
+        editExercise: {name: '', description: '', category: '', time: 0},
     }),
     methods: {
         add() {
@@ -113,6 +120,29 @@ export default {
         },
         deleteExercise(index){
             Exercises.splice(index, 1);
+        },
+        makeActive(id) {
+            const exerciseCard = document.getElementById('card-number-'+id);
+            if(exerciseCard.classList.contains("is-active")){
+                exerciseCard.classList.remove("is-active");
+            }
+            else {
+                exerciseCard.classList.add("is-active");
+            }
+        },
+        edit(id) {
+            if(this.editExercise.name != ''){
+                Exercises[id].name = this.editExercise.name;
+            }
+            if(this.editExercise.description != ''){
+                Exercises[id].description = this.editExercise.description;
+            }
+            if(this.editExercise.category != ''){
+                Exercises[id].category = this.editExercise.category;
+            }
+            if(this.editExercise.time != 0){
+                Exercises[id].time = this.editExercise.time;
+            }
         }
     }
 }
