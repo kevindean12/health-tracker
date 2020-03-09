@@ -64,58 +64,12 @@
                 </div>
               </div>
             </form>
-          </div>
-          <div class="card-image">
-            <img class="image is-3by1" id="listen-notes" src="../assets/listen_notes.png" alt="powered by Listen Notes">
-          </div>
-        </div>
-      </div>
-      
-      <div class="column">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-header-title has-text-centered">
-              Plan a workout
-            </div>
-          </div>
-          <div class="card-content">
-            <p>Add exercises</p>
-            <p>Your workout playlist will populate automatically from your user playlist, but you can also make changes to it:</p>
-            <form>
-              <div class="field">
-                <div class="control">
-                  <div class="select">
-                    <select>
-                      <option v-for="exercise in Exercises" :key="exercise.name" :value="exercise.name"> {{exercise.name}} </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div class="field">
-                <div class="control">
-                  <input type="number" placeholder="0"> minutes
-                </div>
-              </div>
-              <p class="has-text-centered"><strong>Your playlist</strong></p>
-              <div class="columns" v-for="(pod, i) in UserPlaylist" :key="pod.title">
-                <div class="column is-5">
-                  <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
-                </div>
-                <div class="column is-5">
-                  <div> {{pod.episodeTitle}} </div>
-                </div>
-                <div class="column is-2">
-                  <div class="field">
-                    <div class="control"><button @click.prevent="addToWorkout(i)" class="button">Add</button></div>
-                  </div>
-                </div>
-              </div>
-            </form>
+            <img class="image" id="listen-notes" src="../assets/listen_notes.png" alt="powered by Listen Notes">
           </div>
         </div>
       </div>
     </div>
-      <div class="search-results">
+    <div class="search-results">
         <div class="columns" v-for="(pod, i) in searchResults" :key="pod.podcast_title_original" >
           <div class="column is-2">
             <p> <strong>{{pod.podcast_title_original}}</strong> </p>
@@ -136,23 +90,107 @@
           </div>
         </div>
       </div>
+    <div class="columns">
+      <div class="column">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title has-text-centered">
+              Plan a workout
+            </div>
+          </div>
+          <div class="card-content">
+            <p>Add exercises</p>
+            <p>Your workout playlist will populate automatically from your user playlist, but you can also make changes to it:</p>
+            <form>
+              <div class="field">
+                <div class="control">
+                  <div class="select">
+                    <select>
+                      <option v-for="(exercise, i) in Exercises" :key="exercise.name" :value="exercise.name"> {{exercise.name}} </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="control"><button @click.prevent="addExerciseToWorkout(i)" class="button">Add to workout</button></div>
+              </div>
+              <div class="field">
+                <div class="control">
+                  <input type="number" placeholder="0"> minutes
+                </div>
+                <!-- <div class="control"><button @click.prevent="updateTime(i)" class="button">Add to workout</button></div> -->
+              </div>
+              <hr>
+              <p class="has-text-centered"><strong>Your playlist</strong></p>
+              <div class="columns" v-for="(pod, i) in UserPlaylist" :key="pod.title">
+                <div class="column is-3">
+                  <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
+                </div>
+                <div class="column is-5">
+                  <div> {{pod.episodeTitle}} </div>
+                </div>
+                <div class="column is-4">
+                  <div class="field">
+                    <div class="control">
+                      <div class="select">
+                        <select>
+                          <option v-for="(exercise, j) in workoutExercises" :key="exercise.name" :value="exercise.name"> {{exercise.name}} </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <div class="control"><button @click.prevent="addToWorkoutPlaylist(i)" class="button">Add</button></div>
+                  </div>
+                </div>
+                <div class="column is-1">
+                  <div class="field">
+                    <div class="control"><button @click.prevent="removeFromPlaylist(i)" class="button">X</button></div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="columns">
+      <div class="column">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title has-text-centered">
+              Your Workouts
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="columns" v-for="workout in workouts" :key="workout.exercises">
+              <div class="column">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { searchPodcasts, Exercises, UserPlaylist, Podcast } from "../models/Planner";
+import { searchPodcasts, Exercises, UserPlaylist, Podcast, Workout } from "../models/Planner";
+import { WorkoutSchedule } from "../models/Log";
 export default {
   data: () => ({
     minsCardio: 0,
     minsStrength: 0,
     daysToExercise: 0,
     searchWords: '',
+    exerciseTime: 0,
     workoutExercises: [],
+    workoutPlaylist: [],
     workouts: [],
     searchResults: [],
     error: '',
     Exercises,
-    UserPlaylist
+    UserPlaylist,
+    WorkoutSchedule
   }),
   methods: {
     createGoal(minsCardio, minsStrength, days, exercises){
@@ -172,11 +210,20 @@ export default {
       out_pod.coverArt = in_pod.image;
       this.UserPlaylist.push(out_pod);
     },
-    addToWorkout(index){
-      this.workoutExercises.push(this.UserPlaylist[index]);
-      console.log(this.workoutExercises);
+    addToWorkoutPlaylist(index){
+      this.workoutPlaylist.push(this.UserPlaylist[index]);
     },
-
+    removeFromPlaylist(index){
+      this.UserPlaylist.splice(index, 1);
+    },
+    addExerciseToWorkout(index){
+      const exercise = this.Exercises[index];
+      exercise.time = this.exerciseTime;
+      this.workoutExercises.push(exercise);
+    },
+    createWorkout(exercise, episode){
+      this.workouts.push()
+    }
     
   }
 }
@@ -185,6 +232,7 @@ export default {
 <style>
 #listen-notes {
   max-width: 15rem;
+  float: left;
 }
 .has-overflow {
   overflow: scroll;
