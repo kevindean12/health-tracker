@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="title is-2">My Workouts This Week</div>
-        <div class="card" v-for="(workout, i) in WorkoutSchedule" :key="workout.exercise">
+        <div class="card" v-for="(workout, i) in WorkoutSchedule" :key="workout.exercise.toString()">
             <header class="card-header">
                 <span class="card-header-title">
                 Exercise {{i+1}} 

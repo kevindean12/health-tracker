@@ -126,9 +126,9 @@
                     </div>
                   </div>
                 </div>
-                <div class="column">
+                <!-- <div class="column">
                   <p>Added exercise: {{exerciseSelection[exerciseSelection.length-1].name}} for {{exerciseTime}} minutes </p>
-                </div>
+                </div> -->
               </div>
               
               <hr>
@@ -258,11 +258,13 @@ export default {
     },
     addToWorkoutPlaylist(index){
       this.workoutPodcasts.push(JSON.parse(JSON.stringify(this.UserPlaylist[index])));
+      alert(`Added episode to workout playlist.`);
     },
     removeFromPlaylist(index){
       this.UserPlaylist.splice(index, 1);
     },
     createWorkout(){
+      let exercisesToRemove = 0;
       for(let j = 0; j < this.exerciseSelection.length; j++){
         let exTime = this.exerciseSelection[j].time*60;
         let count = 0;
@@ -275,27 +277,39 @@ export default {
         for(let i = 0; i < this.WorkoutSchedule[len].podcasts.length; i++){
           if(this.WorkoutSchedule[len].podcasts[i].remaining >= exTime){
             this.WorkoutSchedule[len].podcasts[i].remaining -= exTime;
+            this.workoutPodcasts[workoutPodsIndex-1].remaining -= exTime;
+            exercisesToRemove++;
             break;
           }
-          else {
+          else { //exercise time is greater than remaining podcast time
             exTime -= this.WorkoutSchedule[len].podcasts[i].remaining;
             this.WorkoutSchedule[len].podcasts[i].remaining = 0;
             if(workoutPodsIndex >= this.workoutPodcasts.length){
+              count++;
               break;
             }
             this.WorkoutSchedule[len].podcasts.push(JSON.parse(JSON.stringify(this.workoutPodcasts[workoutPodsIndex++])));
             count++;
           }
         }
+        if(exTime <= 0){
+            exercisesToRemove++;
+          }
+        else{
+          this.exerciseSelection[j].time = Math.floor(exTime/60);
+        }
         this.workoutPodcasts.splice(0, count);
+        this.exerciseSelection.splice(0, exercisesToRemove);
       }
-      console.log(this.workoutPodcasts);
-      console.log(this.WorkoutSchedule);
+      console.log("workout podcasts:", this.workoutPodcasts);
+      console.log("workouts", this.WorkoutSchedule);
+      console.log("exercises: ", this.exerciseSelection);
     },
     addExercise(exercise){
       const ex = JSON.parse(JSON.stringify(exercise));
       ex.time = this.exerciseTime;
       this.exerciseSelection.push(ex);
+      alert(`Added ${ex.name} for ${ex.time} minutes to exercise list.`);
     },
     
   }
