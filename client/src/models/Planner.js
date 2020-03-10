@@ -10,11 +10,10 @@ export class Exercise {
 }
 
 export class Goal{
-    constructor(cardioMinutes, strengthMinutes, days, exercises){
+    constructor(cardioMinutes, strengthMinutes, days){
         this.cardioMinutes = cardioMinutes;
         this.strengthMinutes = strengthMinutes;
         this.days = days;
-        this.exercises = exercises;
     }
 }
 
@@ -60,7 +59,7 @@ export const UserPlaylist = [
     new Podcast("Football Weekly", "Liverpool's shock loss, more City silverware and German banners - Football Weekly", 4000)
 ];
 
-export const CurrentGoal = new Goal(70, 50, 5, Exercises);
+export const CurrentGoal = new Goal(70, 50, 5);
 
 export async function searchPodcasts(keywords, page){
     //TODO need to sanitize user input first...

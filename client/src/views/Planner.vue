@@ -7,35 +7,47 @@
         <div class="card-header-title has-text-centered">Set weekly goal</div>
       </div>
       <div class="card-content">
-        <form>
-          <div class="field">
-            <div class="control">
-              <label class="label">Select minutes per day of cardio</label> 
-              <input type="number" placeholder="0" v-model="minsCardio">
-            </div>
+        <div class="columns">
+          <div class="column">
+            <form>
+              <div class="field">
+                <div class="control">
+                  {{error}}
+                  <label class="label">Select minutes per day of cardio</label> 
+                  <input type="number" placeholder="0" v-model="minsCardio">
+                </div>
+              </div>
+              <div class="field">
+                <div class="control">
+                  <label class="label">
+                    Select minutes per day of strength
+                  </label>
+                  <input type="number" placeholder="0" v-model="minsStrength">
+                </div>
+              </div>
+              <div class="field">
+                <div class="control">
+                  <label class="label">How many days will you exercise this week?</label> 
+                  <input type="number" placeholder="1" max="7" v-model="daysToExercise">
+                </div>
+              </div>
+              <div class="field">
+                <div class="control">
+                  <button @click.prevent="createGoal" class="button is-success">
+                    Create Goal
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
-          <div class="field">
-            <div class="control">
-              <label class="label">
-                Select minutes per day of strength
-              </label>
-              <input type="number" placeholder="0" v-model="minsStrength">
-            </div>
+          <div class="column">
+            <p><strong>Current Goal for this week:</strong></p>
+            <p> {{CurrentGoal.cardioMinutes}} minutes of Cardio </p>
+            <p> {{CurrentGoal.strengthMinutes}} minutes of Strength </p>
+            <p> over {{CurrentGoal.days}} days </p>
           </div>
-          <div class="field">
-            <div class="control">
-              <label class="label">How many days will you exercise this week?</label> 
-              <input type="number" placeholder="0" v-model="daysToExercise">
-            </div>
-          </div>
-          <div class="field">
-            <div class="control">
-              <button class="button is-success">
-                Update Goal
-              </button>
-            </div>
-          </div>
-        </form>
+        </div>
+        
       </div>
     </div>
       </div>
@@ -133,7 +145,7 @@
                 </div>
                 <div class="column is-4">
                   <div class="field">
-                    <div class="control"><button @click="addToWorkoutPlaylist(i)" class="button">Add to workout</button></div>
+                    <div class="control"><button @click.prevent="addToWorkoutPlaylist(i)" class="button">Add to workout</button></div>
                   </div>
                 </div>
                 <!-- <div class="column is-1">
@@ -141,6 +153,9 @@
                     <div class="control"><button @click.prevent="removeFromPlaylist(i)" class="button">X</button></div>
                   </div>
                 </div> -->
+              </div>
+              <div class="field">
+                <div class="control"><button role="submit" class="button">Create Workout</button></div>
               </div>
             </form>
           </div>
@@ -161,29 +176,26 @@
                 <strong>Exercise</strong>
               </div>
               <div class="column">
-                <strong>Minutes</strong>
-              </div>
-              <div class="column">
                 <strong>Podcast</strong>
               </div>
               <div class="column">
                 <strong>How much of podcast?</strong>
               </div>
             </div>
-            <div class="columns" v-for="workout in WorkoutSchedule" :key="workout.exercise">
-              <div class="column">
-                <p> {{workout.exercise.name}} </p>
-              </div>
-              <div class="column">
-                <p> {{workout.exercise.time}} </p>
-              </div>
-              <div class="column">
-                <p> {{workout.podcast.episodeTitle}} </p>
-              </div>
-              <div class="column">
-                <progress class="progress" :value="((workout.podcast.duration-workout.podcast.remaining)/workout.podcast.duration)*100" max="100">15%</progress>
+            <div class="workouts" v-for="workout in WorkoutSchedule" :key="workout.exercise.toString()">
+              <div class="columns" v-for="pod in workout.podcasts" :key="pod.title">
+                <div class="column">
+                  <p> {{workout.exercise.name}} </p>
+                </div>
+                <div class="column">
+                  <p> {{pod.episodeTitle}} </p>
+                </div>
+                <div class="column">
+                 {{Math.floor(pod.duration/60)-Math.floor(pod.remaining/60)}}mins <progress class="progress" :value="((pod.duration-pod.remaining)/pod.duration)*100" max="100"></progress>
+                </div>
               </div>
             </div>
+            
           </div>
         </div>
       </div>
@@ -192,7 +204,7 @@
 </template>
 
 <script>
-import { searchPodcasts, Exercises, UserPlaylist, Podcast} from "../models/Planner";
+import { searchPodcasts, Exercises, UserPlaylist, Podcast, CurrentGoal } from "../models/Planner";
 import { WorkoutSchedule } from "../models/Log";
 export default {
   data: () => ({
@@ -204,15 +216,31 @@ export default {
     searchResults: [],
     exerciseSelection: {name: '', description: '', category: '', time: 0},
     workoutExerciseTime: 0,
-    workoutPodcast: {title: '', episodeTitle: '', duration: ''},
+    workoutPodcasts: [],
     error: '',
     Exercises,
     UserPlaylist,
-    WorkoutSchedule
+    WorkoutSchedule,
+    CurrentGoal
   }),
   methods: {
-    createGoal(minsCardio, minsStrength, days, exercises){
-
+    createGoal(cardio, strength, days){
+      const numDays = this.daysToExercise;
+      if(numDays > 7){
+        const errormessage = "There are only 7 days in a week, you overachiever! Increase the time per day instead.";
+        this.error = errormessage;
+        throw Error(errormessage);
+      }
+      else if(numDays < 1){
+        const toofew = "You need at least one day for all those minutes per day you chose to mean anything...";
+        this.error = toofew;
+        throw Error(toofew);
+      }
+      this.CurrentGoal = {
+        cardioMinutes: this.minsCardio*numDays,
+        strengthMinutes: this.minsStrength*numDays,
+        days: numDays
+        };
     },
     async search(keywords, page){
       try {
@@ -229,22 +257,43 @@ export default {
       this.UserPlaylist.push(out_pod);
     },
     addToWorkoutPlaylist(index){
-      this.workoutPodcast = this.UserPlaylist[index];
+      this.workoutPodcasts.push(JSON.parse(JSON.stringify(this.UserPlaylist[index])));
     },
     removeFromPlaylist(index){
       this.UserPlaylist.splice(index, 1);
     },
     createWorkout(){
-      this.workoutPodcast.remaining -= this.exerciseSelection.time*60;
+      let exTime = this.exerciseSelection.time*60;
+      let count = 0;
       this.WorkoutSchedule.push({
-        exercise: this.exerciseSelection,
-        podcast: this.workoutPodcast
+        exercise: JSON.parse(JSON.stringify(this.exerciseSelection)),
+        podcasts: [JSON.parse(JSON.stringify(this.workoutPodcasts[0]))]
       });
+      let len = this.WorkoutSchedule.length-1;
+      let workoutPodsIndex = 1;
+      for(let i = 0; i < this.WorkoutSchedule[len].podcasts.length; i++){
+        if(this.WorkoutSchedule[len].podcasts[i].remaining >= exTime){
+          this.WorkoutSchedule[len].podcasts[i].remaining -= exTime;
+          break;
+        }
+        else {
+          exTime -= this.WorkoutSchedule[len].podcasts[i].remaining;
+          this.WorkoutSchedule[len].podcasts[i].remaining = 0;
+          if(workoutPodsIndex >= this.workoutPodcasts.length){
+            break;
+          }
+          this.WorkoutSchedule[len].podcasts.push(JSON.parse(JSON.stringify(this.workoutPodcasts[workoutPodsIndex++])));
+          count++;
+        }
+      }
+      this.workoutPodcasts.splice(0, count);
+      console.log(this.workoutPodcasts);
+      console.log(this.WorkoutSchedule);
     },
     addExercise(exercise){
       this.exerciseSelection = JSON.parse(JSON.stringify(exercise));
       this.exerciseSelection.time = this.exerciseTime;
-    }
+    },
     
   }
 }
