@@ -1,28 +1,27 @@
 <template>
     <div class="container">
         <div class="title is-2">My Workouts This Week</div>
-        <div class="card" v-for="(workout, i) in WorkoutSchedule" :key="workout.exercises">
+        <div class="card" v-for="(workout, i) in WorkoutSchedule" :key="workout.exercise">
             <header class="card-header">
                 <span class="card-header-title">
-                Day {{i+1}} 
+                Exercise {{i+1}} 
                 </span>
-                <span class="title is-6 is-pulled-right">Length: {{workout.time}} minutes</span>
             </header>
-            <div class="card-content" v-for="exercise in workout.exercises" :key="exercise.name">
-                <span class="title is-4"> {{exercise.name}} </span>
+            <div class="card-content">
+                <span class="title is-4"> {{workout.exercise.name}} </span>
                 <span class="icon fa-lg">
-                    <i v-if="exercise.category =='Strength'" class="fas fa-dumbbell"></i>
+                    <i v-if="workout.exercise.category =='Strength'" class="fas fa-dumbbell"></i>
                     <i v-else class="fas fa-running"></i>
                 </span>
-                <span class="title is-4 is-pulled-right"> {{exercise.time}} minutes </span>
+                <span class="title is-4 is-pulled-right"> {{workout.exercise.time}} minutes </span>
                 <p class="content">
-                    {{exercise.description}}
+                    {{workout.exercise.description}}
                 </p>
             </div>
             <footer class="card-footer">
-                <div class="dropdown" :class="{'is-active': isOpen}">
+                <div class="dropdown" :id="i">
                     <div class="dropdown-trigger">
-                        <button class="button" @click="isOpen = !isOpen" aria-haspopup="true" aria-controls="dropdown-menu2">
+                        <button class="button" @click="makeActive(i)" aria-haspopup="true" aria-controls="dropdown-menu2">
                         <span>Update Progress</span>
                         <span class="icon is-small">
                             <i class="fas fa-angle-down" aria-hidden="true"></i>
@@ -32,12 +31,7 @@
                     <div class="dropdown-menu" id="dropdown-menu2" role="menu">
                         <div class="dropdown-content">
                             <div class="dropdown-item">
-                                Completed <input type="number" class="input" placeholder="0"> minutes of: 
-                                <div class="select">
-                                    <select>
-                                        <option v-for="ex in workout.exercises" :key="ex.name">{{ex.name}}</option>
-                                    </select>
-                                </div>
+                                Completed <input type="number" class="input" placeholder="0" v-model="completed"> minutes. 
                             </div>
                         </div>
                     </div>
@@ -55,8 +49,19 @@ export default {
     data: () => ({
         CurrentGoal,
         WorkoutSchedule,
-        isOpen: false,
+        completed: 0,
     }),
+    methods: {
+        makeActive(id) {
+            const exerciseCard = document.getElementById(id);
+            if(exerciseCard.classList.contains("is-active")){
+                exerciseCard.classList.remove("is-active");
+            }
+            else {
+                exerciseCard.classList.add("is-active");
+            }
+        },
+    }
 }
 </script>
 

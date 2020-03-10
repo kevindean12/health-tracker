@@ -18,20 +18,20 @@ export class Goal{
     }
 }
 
-export class Workout {
-    constructor(exercises, playlist){
-        this.playlist = playlist;
-        this.exercises = exercises;
-    }
+// export class Workout {
+//     constructor(exercises, playlist){
+//         this.playlist = playlist;
+//         this.exercises = exercises;
+//     }
 
-    get timeMins(){
-        let count = 0;
-        for(let i = 0; i < this.exercises.length; i++){
-            count += this.exercises[i].time;
-        }
-        return count;
-    }
-}
+//     get timeMins(){
+//         let count = 0;
+//         for(let i = 0; i < this.exercises.length; i++){
+//             count += this.exercises[i].time;
+//         }
+//         return count;
+//     }
+// }
 
 //a node for a linked list containing information about the podcast episode
 export class Podcast{

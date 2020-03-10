@@ -100,52 +100,47 @@
           </div>
           <div class="card-content">
             <p>Add exercises</p>
-            <p>Your workout playlist will populate automatically from your user playlist, but you can also make changes to it:</p>
-            <form>
-              <div class="field">
-                <div class="control">
-                  <div class="select">
-                    <select>
-                      <option v-for="(exercise, i) in Exercises" :key="exercise.name" :value="exercise.name"> {{exercise.name}} </option>
-                    </select>
+            <p>Select an exercise and how long you plan to do it, and then a podcast episode from your playlist to pair with it.</p>
+            <form @submit.prevent="createWorkout">
+              <div class="columns">
+                <div class="column">
+                  <div v-for="exercise in Exercises" :key="exercise.name">
+                    <p> {{exercise.name}} </p>
+                    <div class="field">
+                      <div class="control">
+                        <input type="number" placeholder="0" v-model="exerciseTime"> minutes
+                      </div>
+                      <div class="control"><button @click.prevent="addExercise(exercise)" class="button">Submit Exercise</button></div>
+                    </div>
                   </div>
                 </div>
-                <div class="control"><button @click.prevent="addExerciseToWorkout(i)" class="button">Add to workout</button></div>
-              </div>
-              <div class="field">
-                <div class="control">
-                  <input type="number" placeholder="0"> minutes
+                <div class="column">
+                  <p>Selected exercise: {{exerciseSelection.name}} for {{exerciseTime}} minutes </p>
                 </div>
-                <!-- <div class="control"><button @click.prevent="updateTime(i)" class="button">Add to workout</button></div> -->
               </div>
+              
               <hr>
               <p class="has-text-centered"><strong>Your playlist</strong></p>
               <div class="columns" v-for="(pod, i) in UserPlaylist" :key="pod.title">
-                <div class="column is-3">
+                <div class="column is-2">
                   <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
                 </div>
                 <div class="column is-5">
                   <div> {{pod.episodeTitle}} </div>
                 </div>
+                <div class="column is-1">
+                  <div> {{Math.floor(pod.duration/60)}}:{{pod.duration%60}} </div>
+                </div>
                 <div class="column is-4">
                   <div class="field">
-                    <div class="control">
-                      <div class="select">
-                        <select>
-                          <option v-for="(exercise, j) in workoutExercises" :key="exercise.name" :value="exercise.name"> {{exercise.name}} </option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="field">
-                    <div class="control"><button @click.prevent="addToWorkoutPlaylist(i)" class="button">Add</button></div>
+                    <div class="control"><button @click="addToWorkoutPlaylist(i)" class="button">Add to workout</button></div>
                   </div>
                 </div>
-                <div class="column is-1">
+                <!-- <div class="column is-1">
                   <div class="field">
                     <div class="control"><button @click.prevent="removeFromPlaylist(i)" class="button">X</button></div>
                   </div>
-                </div>
+                </div> -->
               </div>
             </form>
           </div>
@@ -157,13 +152,36 @@
         <div class="card">
           <div class="card-header">
             <div class="card-header-title has-text-centered">
-              Your Workouts
+              Your Workout Schedule
             </div>
           </div>
           <div class="card-content">
-            <div class="columns" v-for="workout in workouts" :key="workout.exercises">
+            <div class="columns">
               <div class="column">
-
+                <strong>Exercise</strong>
+              </div>
+              <div class="column">
+                <strong>Minutes</strong>
+              </div>
+              <div class="column">
+                <strong>Podcast</strong>
+              </div>
+              <div class="column">
+                <strong>How much of podcast?</strong>
+              </div>
+            </div>
+            <div class="columns" v-for="workout in WorkoutSchedule" :key="workout.exercise">
+              <div class="column">
+                <p> {{workout.exercise.name}} </p>
+              </div>
+              <div class="column">
+                <p> {{workout.exercise.time}} </p>
+              </div>
+              <div class="column">
+                <p> {{workout.podcast.episodeTitle}} </p>
+              </div>
+              <div class="column">
+                <progress class="progress" :value="((workout.podcast.duration-workout.podcast.remaining)/workout.podcast.duration)*100" max="100">15%</progress>
               </div>
             </div>
           </div>
@@ -174,7 +192,7 @@
 </template>
 
 <script>
-import { searchPodcasts, Exercises, UserPlaylist, Podcast, Workout } from "../models/Planner";
+import { searchPodcasts, Exercises, UserPlaylist, Podcast} from "../models/Planner";
 import { WorkoutSchedule } from "../models/Log";
 export default {
   data: () => ({
@@ -183,10 +201,10 @@ export default {
     daysToExercise: 0,
     searchWords: '',
     exerciseTime: 0,
-    workoutExercises: [],
-    workoutPlaylist: [],
-    workouts: [],
     searchResults: [],
+    exerciseSelection: {name: '', description: '', category: '', time: 0},
+    workoutExerciseTime: 0,
+    workoutPodcast: {title: '', episodeTitle: '', duration: ''},
     error: '',
     Exercises,
     UserPlaylist,
@@ -211,18 +229,21 @@ export default {
       this.UserPlaylist.push(out_pod);
     },
     addToWorkoutPlaylist(index){
-      this.workoutPlaylist.push(this.UserPlaylist[index]);
+      this.workoutPodcast = this.UserPlaylist[index];
     },
     removeFromPlaylist(index){
       this.UserPlaylist.splice(index, 1);
     },
-    addExerciseToWorkout(index){
-      const exercise = this.Exercises[index];
-      exercise.time = this.exerciseTime;
-      this.workoutExercises.push(exercise);
+    createWorkout(){
+      this.workoutPodcast.remaining -= this.exerciseSelection.time*60;
+      this.WorkoutSchedule.push({
+        exercise: this.exerciseSelection,
+        podcast: this.workoutPodcast
+      });
     },
-    createWorkout(exercise, episode){
-      this.workouts.push()
+    addExercise(exercise){
+      this.exerciseSelection = JSON.parse(JSON.stringify(exercise));
+      this.exerciseSelection.time = this.exerciseTime;
     }
     
   }
