@@ -54,10 +54,11 @@ export const Exercises = [
 
 //fetch episodes using ListenNotes
 //duration is in seconds (and comes that way from ListenNotes)
-export const UserPlaylist = [
-    new Podcast("FiveThirtyEight Politics", "What's At Stake On Super Tuesday", 3332),
-    new Podcast("Football Weekly", "Liverpool's shock loss, more City silverware and German banners - Football Weekly", 4000)
-];
+const pod1 = new Podcast("FiveThirtyEight Politics", "What's At Stake On Super Tuesday", 3332);
+const pod2 = new Podcast("Football Weekly", "Liverpool's shock loss, more City silverware and German banners - Football Weekly", 4000);
+pod1.coverArt = "https://cdn-images-1.listennotes.com/podcasts/fivethirtyeight-politics-fivethirtyeight-OhBumQJlDAT-xEJ8lSGcCvd.300x300.jpg";
+pod2.coverArt = "https://cdn-images-1.listennotes.com/podcasts/football-weekly-the-guardian-cH8YOyjI9xq.300x300.jpg";
+export const UserPlaylist = [pod1, pod2];
 
 export const CurrentGoal = new Goal(70, 50, 5);
 

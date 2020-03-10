@@ -1,22 +1,33 @@
 <template>
     <div class="container">
         <div class="title is-2">My Workouts This Week</div>
-        <div class="card" v-for="(workout, i) in WorkoutSchedule" :key="workout.exercise.toString()">
+        <div class="card" v-for="(workout, i) in WorkoutSchedule" :key="i">
             <header class="card-header">
                 <span class="card-header-title">
                 Exercise {{i+1}} 
                 </span>
             </header>
             <div class="card-content">
-                <span class="title is-4"> {{workout.exercise.name}} </span>
-                <span class="icon fa-lg">
-                    <i v-if="workout.exercise.category =='Strength'" class="fas fa-dumbbell"></i>
-                    <i v-else class="fas fa-running"></i>
-                </span>
-                <span class="title is-4 is-pulled-right"> {{workout.exercise.time}} minutes </span>
-                <p class="content">
-                    {{workout.exercise.description}}
-                </p>
+                 <span class="title is-4 is-pulled-right"> {{workout.exercise.time}} minutes </span>
+                <div class="columns">
+                    <div class="column">
+                        <span class="title is-4"> {{workout.exercise.name}} </span>
+                        <span class="icon fa-lg">
+                            <i v-if="workout.exercise.category =='Strength'" class="fas fa-dumbbell"></i>
+                            <i v-else class="fas fa-running"></i>
+                        </span>
+                        <p class="content">
+                            {{workout.exercise.description}}
+                        </p>
+                    </div>
+                    <div class="column">
+                        
+                        <div v-for="(pod, i) in workout.podcasts" :key="i" class="is-inline-block">
+                            <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
+                            <p>{{pod.episodeTitle}}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <footer class="card-footer">
                 <div class="dropdown" :id="i">
@@ -33,6 +44,9 @@
                             <div class="dropdown-item">
                                 Completed <input type="number" class="input" placeholder="0" v-model="completed"> minutes. 
                             </div>
+                            <button @click.prevent="updateExercise(i)" class="button">
+                                Submit
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -61,6 +75,14 @@ export default {
                 exerciseCard.classList.add("is-active");
             }
         },
+        updateExercise(i){
+            this.WorkoutSchedule[i].exercise.time -= this.completed;
+            if(this.WorkoutSchedule[i].exercise.time <= 0){
+                this.WorkoutSchedule.splice(i,1);
+                alert("Congratulations! You finished your exercise.");
+            }
+            this.completed = 0;
+        }
     }
 }
 </script>

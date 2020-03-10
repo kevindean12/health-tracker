@@ -82,7 +82,7 @@
       </div>
     </div>
     <div class="search-results">
-        <div class="columns" v-for="(pod, i) in searchResults" :key="pod.podcast_title_original" >
+        <div class="columns" v-for="(pod, i) in searchResults" :key="i" >
           <div class="column is-2">
             <p> <strong>{{pod.podcast_title_original}}</strong> </p>
           </div>
@@ -116,7 +116,7 @@
             <form @submit.prevent="createWorkout">
               <div class="columns">
                 <div class="column">
-                  <div v-for="exercise in Exercises" :key="exercise.name">
+                  <div v-for="(exercise, i) in Exercises" :key="i">
                     <p> {{exercise.name}} </p>
                     <div class="field">
                       <div class="control">
@@ -133,7 +133,7 @@
               
               <hr>
               <p class="has-text-centered"><strong>Your playlist</strong></p>
-              <div class="columns" v-for="(pod, i) in UserPlaylist" :key="pod.title">
+              <div class="columns" v-for="(pod, i) in UserPlaylist" :key="i">
                 <div class="column is-2">
                   <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
                 </div>
@@ -179,10 +179,10 @@
                 <strong>Podcast</strong>
               </div>
               <div class="column">
-                <strong>How much of podcast?</strong>
+                <strong>Amount of podcast when you're done</strong>
               </div>
             </div>
-            <div class="workouts" v-for="workout in WorkoutSchedule" :key="workout.exercise.toString()">
+            <div class="workouts" v-for="(workout, i) in WorkoutSchedule" :key="i">
               <div class="columns" v-for="pod in workout.podcasts" :key="pod.title">
                 <div class="column">
                   <p> {{workout.exercise.name}} </p>
@@ -194,6 +194,7 @@
                  {{Math.floor(pod.duration/60)-Math.floor(pod.remaining/60)}}mins <progress class="progress" :value="((pod.duration-pod.remaining)/pod.duration)*100" max="100"></progress>
                 </div>
               </div>
+              <hr>
             </div>
             
           </div>
