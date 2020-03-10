@@ -127,7 +127,7 @@
                   </div>
                 </div>
                 <div class="column">
-                  <p>Selected exercise: {{exerciseSelection.name}} for {{exerciseTime}} minutes </p>
+                  <p>Added exercise: {{exerciseSelection[exerciseSelection.length-1].name}} for {{exerciseTime}} minutes </p>
                 </div>
               </div>
               
@@ -214,7 +214,7 @@ export default {
     searchWords: '',
     exerciseTime: 0,
     searchResults: [],
-    exerciseSelection: {name: '', description: '', category: '', time: 0},
+    exerciseSelection: [],
     workoutExerciseTime: 0,
     workoutPodcasts: [],
     error: '',
@@ -263,36 +263,39 @@ export default {
       this.UserPlaylist.splice(index, 1);
     },
     createWorkout(){
-      let exTime = this.exerciseSelection.time*60;
-      let count = 0;
-      this.WorkoutSchedule.push({
-        exercise: JSON.parse(JSON.stringify(this.exerciseSelection)),
-        podcasts: [JSON.parse(JSON.stringify(this.workoutPodcasts[0]))]
-      });
-      let len = this.WorkoutSchedule.length-1;
-      let workoutPodsIndex = 1;
-      for(let i = 0; i < this.WorkoutSchedule[len].podcasts.length; i++){
-        if(this.WorkoutSchedule[len].podcasts[i].remaining >= exTime){
-          this.WorkoutSchedule[len].podcasts[i].remaining -= exTime;
-          break;
-        }
-        else {
-          exTime -= this.WorkoutSchedule[len].podcasts[i].remaining;
-          this.WorkoutSchedule[len].podcasts[i].remaining = 0;
-          if(workoutPodsIndex >= this.workoutPodcasts.length){
+      for(let j = 0; j < this.exerciseSelection.length; j++){
+        let exTime = this.exerciseSelection[j].time*60;
+        let count = 0;
+        this.WorkoutSchedule.push({
+          exercise: JSON.parse(JSON.stringify(this.exerciseSelection[j])),
+          podcasts: [JSON.parse(JSON.stringify(this.workoutPodcasts[0]))]
+        });
+        let len = this.WorkoutSchedule.length-1;
+        let workoutPodsIndex = 1;
+        for(let i = 0; i < this.WorkoutSchedule[len].podcasts.length; i++){
+          if(this.WorkoutSchedule[len].podcasts[i].remaining >= exTime){
+            this.WorkoutSchedule[len].podcasts[i].remaining -= exTime;
             break;
           }
-          this.WorkoutSchedule[len].podcasts.push(JSON.parse(JSON.stringify(this.workoutPodcasts[workoutPodsIndex++])));
-          count++;
+          else {
+            exTime -= this.WorkoutSchedule[len].podcasts[i].remaining;
+            this.WorkoutSchedule[len].podcasts[i].remaining = 0;
+            if(workoutPodsIndex >= this.workoutPodcasts.length){
+              break;
+            }
+            this.WorkoutSchedule[len].podcasts.push(JSON.parse(JSON.stringify(this.workoutPodcasts[workoutPodsIndex++])));
+            count++;
+          }
         }
+        this.workoutPodcasts.splice(0, count);
       }
-      this.workoutPodcasts.splice(0, count);
       console.log(this.workoutPodcasts);
       console.log(this.WorkoutSchedule);
     },
     addExercise(exercise){
-      this.exerciseSelection = JSON.parse(JSON.stringify(exercise));
-      this.exerciseSelection.time = this.exerciseTime;
+      const ex = JSON.parse(JSON.stringify(exercise));
+      ex.time = this.exerciseTime;
+      this.exerciseSelection.push(ex);
     },
     
   }
