@@ -1,7 +1,20 @@
 const express = require("express");
 const app = express();
+const exerciseLog = require('./controllers/log');
+const path = require('path');
 const port = 3000;
 
-app.get("/", (req, res) => res.send("Hello world!"));
+app
+    .use(express.json())
+    .use(express.urlencoded({ extended: true}))
+    .use(express.static(__dirname + '/../client/dist'))
+    .get('/', (req, res) => res.send("Hello world!"))
+    .use('/log', exerciseLog)
+
+    .use((req, res) => {
+        const homepath = path.join(__dirname, '/../client/dist/index.html');
+        res.sendFile(homepath);
+    })
+
 
 app.listen(port, () => console.log(`Listening at http://localhost:${port}`));
