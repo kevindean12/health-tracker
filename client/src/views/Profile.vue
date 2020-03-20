@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="title is-3">Welcome, {{CurrentUser.Name}} </div>
+        <div class="title is-3">Welcome, {{CurrentUser.Email}} </div>
         <div class="columns">
             <div class="column">
                 <div class="card">

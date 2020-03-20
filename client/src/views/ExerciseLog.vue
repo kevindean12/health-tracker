@@ -8,7 +8,7 @@
                 </span>
             </header>
             <div class="card-content">
-                 <span class="title is-4 is-pulled-right"> {{workout.exercise.time}} minutes </span>
+                 <span class="title is-4 is-pulled-right"> {{workout.exercise.time}} minutes remaining </span>
                 <div class="columns">
                     <div class="column">
                         <span class="title is-4"> {{workout.exercise.name}} </span>

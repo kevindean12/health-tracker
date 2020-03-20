@@ -1,6 +1,6 @@
 export const Users = [
-    {Name: 'Kevin', Password: '2020', Email: 'kevin@notmail.com'},
-    {Name: 'Admin', Password: 'admin', Email: 'admin@soundjog.com'}
+    {Email: 'kevin@notmail.com', Password: '2020'},
+    {Email: 'admin@soundjog.com', Password: 'admin'}
 ];
 
 export let CurrentUser = null;
@@ -18,4 +18,14 @@ export function AdminLogin(email, password){
     const user = Users.find(x => x.Email == 'admin@soundjog.com');
     if(user.Password != password) throw Error('Invalid credentials');
     return CurrentUser = user;
+}
+
+export function Register(email, password, confirmation){
+    if(password != confirmation) {
+        throw Error('Passwords do not match!');
+    }
+    // if(password.length < 12){
+    //     throw Error('Password is too short');
+    // } //implement this in deployment
+    Users.push({Email: email, Password: password});
 }
