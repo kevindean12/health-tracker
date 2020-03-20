@@ -25,7 +25,9 @@
                         <div v-for="(pod, i) in workout.podcasts" :key="i" class="is-inline-block">
                             <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
                             <p>{{pod.episodeTitle}}</p>
+                            <audio @play="getTrackTimePlay" @pause="getTrackTimePause" controls :src="pod.audio"></audio>
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -64,6 +66,8 @@ export default {
         CurrentGoal,
         WorkoutSchedule,
         completed: 0,
+        trackTimePlay: 0,
+        trackTimeStop: 0,
     }),
     methods: {
         makeActive(id) {
@@ -82,6 +86,16 @@ export default {
                 alert("Congratulations! You finished your exercise.");
             }
             this.completed = 0;
+        },
+        getTrackTimePlay(){ //TODO use these for automatically updating time remaining
+            console.log("playing");
+            console.log(Math.floor(document.getElementsByTagName("audio")[0].currentTime/60));
+            this.trackTimePlay = Math.floor(document.getElementsByTagName("audio")[0].currentTime/60); 
+        },
+        getTrackTimePause(){ //TODO use these for automatically updating time remaining
+            console.log("stopped");
+            console.log(Math.floor(document.getElementsByTagName("audio")[0].currentTime/60));
+            this.trackTimeStop = Math.floor(document.getElementsByTagName("audio")[0].currentTime/60);
         }
     }
 }

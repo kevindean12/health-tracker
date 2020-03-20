@@ -253,7 +253,7 @@ export default {
     },
     addToPlaylist(resultIndex){
       const in_pod = this.searchResults[resultIndex];
-      const out_pod = new Podcast(in_pod.podcast_title_original, in_pod.title_original, in_pod.audio_length_sec);
+      const out_pod = new Podcast(in_pod.podcast_title_original, in_pod.title_original, in_pod.audio_length_sec, in_pod.audio);
       out_pod.coverArt = in_pod.image;
       this.UserPlaylist.push(out_pod);
     },
