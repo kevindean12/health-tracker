@@ -112,7 +112,7 @@
           </div>
           <div class="card-content">
             <p>Add exercises</p>
-            <p>Select an exercise and how long you plan to do it, and then a podcast episode from your playlist to pair with it.</p>
+            <p>Select an exercise and how long you plan to do it, then add podcast episodes. Finally, click "create workout" to pair exercises and podcasts.</p>
             <form @submit.prevent="createWorkout">
               <div class="columns">
                 <div class="column">
@@ -120,9 +120,9 @@
                     <p> {{exercise.name}} </p>
                     <div class="field">
                       <div class="control">
-                        <input type="number" placeholder="0" v-model="exerciseTime"> minutes
+                        <input type="number" placeholder="0" v-model="exerciseTime[i]"> minutes
                       </div>
-                      <div class="control"><button @click.prevent="addExercise(exercise)" class="button">Submit Exercise</button></div>
+                      <div class="control"><button @click.prevent="addExercise(exercise, i)" class="button">Submit Exercise</button></div>
                     </div>
                   </div>
                 </div>
@@ -213,7 +213,7 @@ export default {
     minsStrength: 0,
     daysToExercise: 0,
     searchWords: '',
-    exerciseTime: 0,
+    exerciseTime: [],
     searchResults: [],
     exerciseSelection: [],
     workoutExerciseTime: 0,
@@ -306,9 +306,9 @@ export default {
       console.log("workouts", this.WorkoutSchedule);
       console.log("exercises: ", this.exerciseSelection);
     },
-    addExercise(exercise){
+    addExercise(exercise, i){
       const ex = JSON.parse(JSON.stringify(exercise));
-      ex.time = this.exerciseTime;
+      ex.time = this.exerciseTime[i];
       this.exerciseSelection.push(ex);
       alert(`Added ${ex.name} for ${ex.time} minutes to exercise list.`);
     },
