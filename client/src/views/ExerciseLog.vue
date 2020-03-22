@@ -25,7 +25,7 @@
                         <div v-for="(pod, i) in workout.podcasts" :key="i" class="is-inline-block">
                             <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
                             <p>{{pod.episodeTitle}}</p>
-                            <audio @play="getTrackTimePlay" @pause="getTrackTimePause" controls :src="pod.audio"></audio>
+                            <audio @play="getTrackTimePlay" @pause="getTrackTimePause(i)" controls :src="pod.audio"></audio>
                         </div>
                         
                     </div>
@@ -87,15 +87,16 @@ export default {
             }
             this.completed = 0;
         },
-        getTrackTimePlay(){ //TODO use these for automatically updating time remaining
-            console.log("playing");
-            console.log(Math.floor(document.getElementsByTagName("audio")[0].currentTime/60));
+        getTrackTimePlay(){
             this.trackTimePlay = Math.floor(document.getElementsByTagName("audio")[0].currentTime/60); 
         },
-        getTrackTimePause(){ //TODO use these for automatically updating time remaining
-            console.log("stopped");
-            console.log(Math.floor(document.getElementsByTagName("audio")[0].currentTime/60));
+        getTrackTimePause(i){ 
             this.trackTimeStop = Math.floor(document.getElementsByTagName("audio")[0].currentTime/60);
+            const difference = this.trackTimeStop - this.trackTimePlay;
+            if(difference > 0){
+                this.completed += difference;
+                this.updateExercise(i);
+            }
         }
     }
 }
