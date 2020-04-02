@@ -1,6 +1,24 @@
 <template>
     <div class="container">
         <div class="title is-2">My Workouts This Week</div>
+        <div class="box">
+            <div class="columns">
+                <div class="column"></div>
+                <div class="column">
+                    <audio controls @play="getTrackTimePlay" @pause="getTrackTimePause"  :src="currentAudio" class="has-text-centered">
+                        Sorry, there's supposed to be an audio player here but your browser doesn't support HTML5!
+                    </audio>
+                    <div class="panel is-link">
+                        <a v-for="(pod, i) in availablePodcasts" :key="i" href="#" @click="updateTrack(i)" class="panel-block">
+                            <img :src="pod.coverArt" :alt="pod.title" class="image is-32x32">
+                            {{pod.episodeTitle}}
+                        </a>
+                    </div>
+                </div>
+                <div class="column"></div>
+            </div>
+            
+        </div>
         <div class="card" v-for="(workout, i) in WorkoutSchedule" :key="i">
             <header class="card-header">
                 <span class="card-header-title">
@@ -22,12 +40,16 @@
                     </div>
                     <div class="column">
                         
-                        <div v-for="(pod, i) in workout.podcasts" :key="i" class="is-inline-block">
+                        <!-- <div v-for="(pod, i) in workout.podcasts" :key="i" class="is-inline-block">
                             <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
                             <p>{{pod.episodeTitle}}</p>
                             <audio @play="getTrackTimePlay" @pause="getTrackTimePause(i)" controls :src="pod.audio"></audio>
-                        </div>
-                        
+                        </div> -->
+                        <button @click="selectExercise(i)" class="button">Work out and listen!</button>
+                        <p v-if="currentExercise == i" class="content is-success">
+                            Click on a podcast in the player, and hit play! Your time spent listening will update the time left in this exercise automatically when you stop the podcast player.
+                        </p>
+
                     </div>
                 </div>
             </div>
@@ -46,7 +68,7 @@
                             <div class="dropdown-item">
                                 Completed <input type="number" class="input" placeholder="0" v-model="completed"> minutes. 
                             </div>
-                            <button @click.prevent="updateExercise(i)" class="button">
+                            <button @click.prevent="selectExercise(i)" class="button">
                                 Submit
                             </button>
                         </div>
@@ -68,7 +90,23 @@ export default {
         completed: 0,
         trackTimePlay: 0,
         trackTimeStop: 0,
+        currentAudio: "",
+        currentExercise: -1
     }),
+    computed: {
+        availablePodcasts: () => {
+            const uniquePods = [];
+            for(let i = 0; i < WorkoutSchedule.length; i++){
+                for(let j = 0; j < WorkoutSchedule[i].podcasts.length; j++){
+                    const pod = WorkoutSchedule[i].podcasts[j];
+                    if(!uniquePods.map(x => x.episodeTitle).includes(pod.episodeTitle)){
+                        uniquePods.push(pod);
+                    }
+                }
+            }
+            return uniquePods;
+        }
+    },
     methods: {
         makeActive(id) {
             const exerciseCard = document.getElementById(id);
@@ -90,13 +128,20 @@ export default {
         getTrackTimePlay(){
             this.trackTimePlay = Math.floor(document.getElementsByTagName("audio")[0].currentTime/60); 
         },
-        getTrackTimePause(i){ 
+        getTrackTimePause(){ 
             this.trackTimeStop = Math.floor(document.getElementsByTagName("audio")[0].currentTime/60);
             const difference = this.trackTimeStop - this.trackTimePlay;
             if(difference > 0){
                 this.completed += difference;
-                this.updateExercise(i);
+                this.updateExercise(this.currentExercise);
             }
+        },
+        updateTrack(index){
+            this.currentAudio = this.availablePodcasts[index].audio;
+        },
+        selectExercise(i){
+            console.log("current exercise is now: " + i);
+            this.currentExercise = i;
         }
     }
 }
