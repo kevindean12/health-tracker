@@ -1,14 +1,15 @@
 const express = require('express');
 
-const exercises = require('../models/Exercises');
+const plan = require('../models/Plan');
+const log = require('../models/Log');
 
 const router = express.Router();
 
 router
-    .get('/exercises', (req, res) => res.send(exercises))
-    .post('/exercises', (req, res) => {
-        exercises.addExercise(req.query.name, req.query.description, req.query.category, req.query.time);
-        res.send(exercises.exerciseList[exercises.exerciseList.length - 1]);
+    .get('/exercises', (req, res) => res.send(plan.MyWorkouts))
+    .post('/updateExercise', (req, res) => {
+        log.UpdateProgress(req.body.workoutID, req.body.timeCompleted);
+        res.send(plan.MyWorkouts);
     })
 
 module.exports = router

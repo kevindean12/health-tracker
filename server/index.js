@@ -3,6 +3,7 @@ const app = express();
 const exerciseLog = require('./controllers/log');
 const planner = require('./controllers/planner');
 const admin = require('./controllers/admin');
+const users = require('./controllers/users');
 const path = require('path');
 const port = 3000;
 
@@ -14,6 +15,7 @@ app
     .use('/log', exerciseLog)
     .use('/plan', planner)
     .use('/admin', admin)
+    .use('/users', users)
 
     .use((req, res) => {
         const homepath = path.join(__dirname, '/../client/dist/index.html');

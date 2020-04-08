@@ -1,4 +1,4 @@
-
+const users = require('./Users');
 class Exercise {
     constructor(name, description, category, mins){
         this.name = name;
@@ -30,6 +30,19 @@ class Podcast{
     }
 }
 
+const MyWorkouts = [];
+
+function NewSession(userID) {
+    const user = users.GetUser(userID);
+    return MyWorkouts;
+}
+
+function SubmitWorkout(workout) {
+    MyWorkouts.push(workout);
+    return MyWorkouts;
+}
+
 module.exports = {
-    Exercise, Goal, Podcast
+    Exercise, Goal, Podcast, 
+    MyWorkouts, NewSession, SubmitWorkout
 };

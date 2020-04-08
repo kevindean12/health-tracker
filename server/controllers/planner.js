@@ -9,5 +9,7 @@ router
     .get('/', (req, res) => res.send({
         Exercises: exercises.exerciseList
     }))
+    .post('/newsession', (req, res) => res.send(planner.NewSession(req.body.userID)))
+    .post('/submitWorkout', (req, res) => res.send(planner.SubmitWorkout(req.body.workout)))
     
 module.exports = router;
