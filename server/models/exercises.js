@@ -12,8 +12,9 @@ const exercises = [
     new Exercise("Pushups", "Arm and chest workout using only body weight.", "Strength", 10)
 ];
 
-function addExercise(name, description, category, time){
-    exercises.push(new Exercise(name, description, category, time));
+function addExercise(exercise){
+    exercises.push(exercise);
+    return exercise;
 }
 
 module.exports = {
