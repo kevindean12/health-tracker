@@ -1,22 +1,14 @@
-export const Users = [
-    {Email: 'kevin@notmail.com', Password: '2020'},
-    {Email: 'admin@soundjog.com', Password: 'admin'}
-];
+import sjFetch from './sjFetch';
 
 export let CurrentUser = null;
 
-export function Login(email, password){
-    const user = Users.find(x => x.Email == email);
-    if(!user) throw Error('Invalid credentials');
-    if(user.Password != password) throw Error('Invalid credentials');
-
+export async function Login(email, password){
+    const user = await sjFetch('/users/login', {email, password});
     return CurrentUser = user;
 }
 
-export function AdminLogin(email, password){
-    if(email != 'admin@soundjog.com') throw Error('Invalid credentials');
-    const user = Users.find(x => x.Email == 'admin@soundjog.com');
-    if(user.Password != password) throw Error('Invalid credentials');
+export async function AdminLogin(email, password){
+    const user = await sjFetch('/admin/login', {email, password});
     return CurrentUser = user;
 }
 

@@ -41,9 +41,9 @@ export default {
     error: ''
   }),
   methods: {
-    adminlogin(){
+    async adminlogin(){
       try {
-        AdminLogin(this.email, this.password);
+        await AdminLogin(this.email, this.password);
         this.$router.push('/admin');
       } catch (error) {
         this.error = error;
