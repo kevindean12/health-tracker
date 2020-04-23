@@ -7,14 +7,17 @@ const router = express.Router();
 
 router
     .get('/', (req, res) => res.send({
-        Exercises: exercises.exerciseList
+        Exercises: exercises.exerciseList,
+        UserPlaylist: planner.UserPlaylists,
+        Workouts: planner.UserWorkouts
     }))
     .post('/newsession', (req, res) => res.send(planner.NewSession(req.body.userID)))
-    .post('/submitWorkout', (req, res) => res.send(planner.SubmitWorkout(req.body.workout)))
+    .post('/submitWorkout', (req, res) => res.send(planner.SubmitWorkout(req.body.workouts)))
     .post('/podsearch', async (req, res) => {
         const results = await planner.searchPodcasts(req.body.keywords, req.body.page);
-        console.log(results);
         res.send(results);
     })
-    
+    .post('/creategoal', (req, res) => res.send(planner.createGoal(req.body.cardioMinutes, req.body.strengthMinutes, req.body.days)))
+    .post('/submitpod', (req, res) => res.send(planner.addToPlaylist(req.body.userID, req.body.podcast)))
+
 module.exports = router;

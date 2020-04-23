@@ -205,8 +205,9 @@
 </template>
 
 <script>
-import { searchPodcasts, Exercises, UserPlaylist, Podcast, CurrentGoal } from "../models/Planner";
-import { WorkoutSchedule } from "../models/Log";
+//import { searchPodcasts, Exercises, UserPlaylist, Podcast, createGoal } from "../models/Planner";
+import Planner from "../models/Planner";
+//import { WorkoutSchedule } from "../models/Log";
 export default {
   data: () => ({
     minsCardio: 0,
@@ -219,13 +220,13 @@ export default {
     workoutExerciseTime: 0,
     workoutPodcasts: [],
     error: '',
-    Exercises,
-    UserPlaylist,
-    WorkoutSchedule,
-    CurrentGoal
+    Exercises: Planner.Exercises,
+    UserPlaylist: Planner.UserPlaylist,
+    WorkoutSchedule: Planner.WorkoutSchedule,
+    CurrentGoal: {}
   }),
   methods: {
-    createGoal(cardio, strength, days){
+    async createGoal(){
       const numDays = this.daysToExercise;
       if(numDays > 7){
         const errormessage = "There are only 7 days in a week, you overachiever! Increase the time per day instead.";
@@ -237,11 +238,7 @@ export default {
         this.error = toofew;
         throw Error(toofew);
       }
-      this.CurrentGoal = {
-        cardioMinutes: this.minsCardio*numDays,
-        strengthMinutes: this.minsStrength*numDays,
-        days: numDays
-        };
+      this.CurrentGoal = await createGoal(this.minsCardio, this.minsStrength, numDays);
     },
     async search(keywords, page){
       try {
@@ -264,7 +261,7 @@ export default {
     removeFromPlaylist(index){
       this.UserPlaylist.splice(index, 1);
     },
-    createWorkout(){
+    async createWorkout(){
       let exercisesToRemove = 0;
       for(let j = 0; j < this.exerciseSelection.length; j++){
         let exTime = this.exerciseSelection[j].time*60;

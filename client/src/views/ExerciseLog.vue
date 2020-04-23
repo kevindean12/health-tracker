@@ -80,13 +80,13 @@
 </template>
 
 <script>
-import {WorkoutSchedule} from "../models/Log.js";
-import {CurrentGoal} from "../models/Planner.js";
+//import {WorkoutSchedule} from "../models/Log.js";
+//import {CurrentGoal} from "../models/Planner.js";
+import Planner from "../models/Planner.js"
 export default {
     name: 'ExerciseLog',
     data: () => ({
-        CurrentGoal,
-        WorkoutSchedule,
+        WorkoutSchedule: Planner.WorkoutSchedule,
         completed: 0,
         trackTimePlay: 0,
         trackTimeStop: 0,

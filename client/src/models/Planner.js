@@ -1,5 +1,5 @@
 import sjFetch from "./sjFetch";
-export class Exercise {
+class Exercise {
     constructor(name, description, category, mins){
         this.name = name;
         this.description = description;
@@ -8,7 +8,7 @@ export class Exercise {
     }
 }
 
-export class Goal{
+class Goal{
     constructor(cardioMinutes, strengthMinutes, days){
         this.cardioMinutes = cardioMinutes;
         this.strengthMinutes = strengthMinutes;
@@ -32,7 +32,7 @@ export class Goal{
 // }
 
 //a node for a linked list containing information about the podcast episode
-export class Podcast{
+class Podcast{
     constructor(title, episodeTitle, durationSeconds, audio){
         this.title = title;
         this.episodeTitle = episodeTitle;
@@ -47,24 +47,49 @@ export class Podcast{
 
 
 
-export const Exercises = [
-    new Exercise("Jog", "A moderately paced run.", "Cardio", 15),
-    new Exercise("Pushups", "Arm and chest workout using only body weight.", "Strength", 10)
-];
+// export const Exercises = [
+//     new Exercise("Jog", "A moderately paced run.", "Cardio", 15),
+//     new Exercise("Pushups", "Arm and chest workout using only body weight.", "Strength", 10)
+// ];
 
 //fetch episodes using ListenNotes
 //duration is in seconds (and comes that way from ListenNotes)
-const pod1 = new Podcast("FiveThirtyEight Politics", "What's At Stake On Super Tuesday", 3332, "https://www.listennotes.com/e/p/7bf87744732544d2aed2ca6a7be177c6/");
-const pod2 = new Podcast("Football Weekly", "Liverpool's shock loss, more City silverware and German banners - Football Weekly", 4000, "https://www.listennotes.com/e/p/2f1a906c34464548938fcf66a098b32f/");
-pod1.coverArt = "https://cdn-images-1.listennotes.com/podcasts/fivethirtyeight-politics-fivethirtyeight-OhBumQJlDAT-xEJ8lSGcCvd.300x300.jpg";
-pod2.coverArt = "https://cdn-images-1.listennotes.com/podcasts/football-weekly-the-guardian-cH8YOyjI9xq.300x300.jpg";
-export const UserPlaylist = [pod1, pod2];
 
-export const CurrentGoal = new Goal(70, 50, 5);
 
-export async function searchPodcasts(keywords, page){
-    //TODO sanitize inputs
-    const results = await sjFetch('/plan/podsearch', {keywords: keywords, page: page});
-    console.log(results);
-    return results;
+
+
+
+
+export default {
+    Exercises: [],
+    UserPlaylist: [],
+    async createGoal(cardio, strength, days){
+        const response = await sjFetch('/plan/creategoal', {
+            cardioMinutes: cardio*days,
+            strengthMinutes: strength*days,
+            days: days
+        });
+        return response;
+    },
+    async searchPodcasts(keywords, page){
+        //TODO sanitize inputs
+        const results = await sjFetch('/plan/podsearch', {keywords: keywords, page: page});
+        return results;
+    },
+    Exercise,
+    async start(){
+        const response = await sjFetch('/plan');
+        this.Exercises = response.Excercises;
+        this.UserPlaylist = response.UserPlaylist;
+        this.WorkoutSchedule = response.Workouts;
+    },
+    WorkoutSchedule: [],
+    async createNewWorkout(workoutSchedule){
+        const workouts = await sjFetch('/plan/submitWorkout', {workouts: workoutSchedule});
+        return workouts;
+    },
+    async addToPlaylist(workoutPodcasts){
+        const playlist = await sjFetch('/plan/submitpod');
+        return playlist;
+    }
 }

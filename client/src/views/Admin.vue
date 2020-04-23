@@ -36,7 +36,7 @@
                 Add
             </button>
         </form>
-          <div class="card" v-for="(exercise, i) in Exercises" :key="exercise.name">
+          <div class="card" v-for="(exercise, i) in Planner.Exercises" :key="exercise.name">
               <div class="card-header-title">
                   {{exercise.name}}
               </div>
@@ -103,11 +103,12 @@
 </template>
 
 <script>
-import { Exercises, Exercise } from "../models/Planner";
+//import { Exercises, Exercise } from "../models/Planner";
+import Planner from "../models/Planner";
 
 export default {
     data: () => ({
-        Exercises,
+        Exercises: Planner.Exercises,
         name: '',
         description: '',
         category: '',
@@ -116,7 +117,7 @@ export default {
     }),
     methods: {
         add() {
-            Exercises.push(new Exercise(this.name, this.description, this.category, this.time));
+            Exercises.push(new Planner.Exercise(this.name, this.description, this.category, this.time));
         },
         deleteExercise(index){
             Exercises.splice(index, 1);
