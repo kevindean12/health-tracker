@@ -11,5 +11,10 @@ router
     }))
     .post('/newsession', (req, res) => res.send(planner.NewSession(req.body.userID)))
     .post('/submitWorkout', (req, res) => res.send(planner.SubmitWorkout(req.body.workout)))
+    .post('/podsearch', async (req, res) => {
+        const results = await planner.searchPodcasts(req.body.keywords, req.body.page);
+        console.log(results);
+        res.send(results);
+    })
     
 module.exports = router;

@@ -1,5 +1,4 @@
-import { token } from "../models/listenapi";
-const unirest = require('unirest');
+import sjFetch from "./sjFetch";
 export class Exercise {
     constructor(name, description, category, mins){
         this.name = name;
@@ -64,15 +63,8 @@ export const UserPlaylist = [pod1, pod2];
 export const CurrentGoal = new Goal(70, 50, 5);
 
 export async function searchPodcasts(keywords, page){
-    //TODO need to sanitize user input first...
-    const terms = keywords.split(' ');
-    if(terms.length > 7) throw Error('Too many search terms');
-    let input = '';
-    for(let i = 0; i < terms.length-1; i++){
-        input += `${terms[i]}%20`;
-    }
-    input += terms[terms.length-1];
-    let response = await unirest.get(`https://listen-api.listennotes.com/api/v2/search?q=${input}&sort_by_date=0&type=episode&offset=${page}&only_in=title%2Cdescription&language=English&safe_mode=0`)
-        .header('X-ListenAPI-Key', token);
-    return await response.toJSON();
+    //TODO sanitize inputs
+    const results = await sjFetch('/plan/podsearch', {keywords: keywords, page: page});
+    console.log(results);
+    return results;
 }
