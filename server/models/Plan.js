@@ -49,13 +49,27 @@ function NewSession(userID) {
     return MyWorkouts;
 }
 //needs to construct an object that includes userID
-function SubmitWorkout(workouts) {
-    UserWorkouts.push(workouts);
-    return UserWorkouts;
+function SubmitWorkout(userID, workouts) {
+    if(UserWorkouts.some(x => x.UserID == userID)){
+        const workoutIter = workouts.values();
+        const workoutList = UserWorkouts.find(x => x.UserID == userID).WorkoutSchedule;
+        for(const w of workoutIter){workoutList.push(w);}
+    }
+    else {
+        UserWorkouts.push({UserID: userID, WorkoutSchedule: workouts});
+    }
+    
+    return UserWorkouts.find(x => x.UserID == userID);
 }
 
 function addToPlaylist(userID, pod){
-    //adds to user's playlist
+    if(UserPlaylists.some(x => x.UserID == userID)){
+        UserPlaylists.find(x => x.UserID == userID).Playlist.push(pod);
+    }
+    else {
+        UserPlaylists.push({UserID: userID, Playlist: [pod]});
+    }
+    return UserPlaylists.find(x => x.UserID == userID);
 }
 
 async function searchPodcasts(keywords, page){
