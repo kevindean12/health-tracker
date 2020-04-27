@@ -209,6 +209,9 @@
 import Planner from "../models/Planner";
 //import { WorkoutSchedule } from "../models/Log";
 export default {
+  created(){
+    Planner.start();
+  },
   data: () => ({
     minsCardio: 0,
     minsStrength: 0,

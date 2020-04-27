@@ -16,6 +16,7 @@ app.use(function(req, res, next){
 
 //authorization through headers
 app.use(function(req, res, next) {
+    console.log(req.headers.authorization);
     const arr = (req.headers.authorization || "").split(" ");
     if(arr.length > 1 && arr[1] != null){
         req.userID = +arr[1];

@@ -5,8 +5,8 @@ export default async function sjFetch(url, data){
     let response;
 
     const headers = {};
-    if(CurrentUser && CurrentUser.userID != null){
-        headers.authorization = "bearer " + CurrentUser.userID;
+    if(CurrentUser && CurrentUser.UserID != null){
+        headers.authorization = "bearer " + CurrentUser.UserID;
     }
 
     if(data){
