@@ -117,7 +117,7 @@
               <div class="columns">
                 <div class="column">
                   <div v-for="(exercise, i) in Exercises" :key="i">
-                    <p> {{exercise.name}} </p>
+                    <p draggable="true"> {{exercise.name}} </p>
                     <div class="field">
                       <div class="control">
                         <input type="number" placeholder="0" v-model="exerciseTime[i]"> minutes
@@ -133,7 +133,7 @@
               
               <hr>
               <p class="has-text-centered"><strong>Your playlist</strong></p>
-              <div class="columns" v-for="(pod, i) in UserPlaylist" :key="i">
+              <div draggable="true" class="columns" v-for="(pod, i) in UserPlaylist" :key="i">
                 <div class="column is-2">
                   <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
                 </div>
