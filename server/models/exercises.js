@@ -1,15 +1,15 @@
-class Exercise {
-    constructor(name, description, category, mins){
-        this.name = name;
-        this.description = description;
-        this.category = category;
-        this.time = mins;
-    }
-}
+// class Exercise {
+//     constructor(name, description, category, mins){
+//         this.name = name;
+//         this.description = description;
+//         this.category = category;
+//         this.time = mins;
+//     }
+// }
 
 const exercises = [
-    new Exercise("Jog", "A moderately paced run.", "Cardio", 15),
-    new Exercise("Pushups", "Arm and chest workout using only body weight.", "Strength", 10)
+    {name: "Jog", description: "A moderately paced run.", category: "Cardio", time: 15},
+    {name: "Pushups", description: "Arm and chest workout using only body weight.", category: "Strength", time: 10}
 ];
 
 function addExercise(exercise){

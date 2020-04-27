@@ -6,11 +6,14 @@ const planner = require('../models/Plan');
 const router = express.Router();
 
 router
-    .get('/', (req, res) => res.send({
-        Exercises: exercises.exerciseList,
-        UserPlaylist: planner.UserPlaylists,
-        Workouts: planner.UserWorkouts
-    }))
+    .get('/', (req, res) => {
+        console.log({userID: req.userID});
+        res.send({
+            Exercises: exercises.exerciseList,
+            UserPlaylist: planner.UserPlaylists,
+            Workouts: planner.UserWorkouts
+        });
+    })
     .post('/newsession', (req, res) => res.send(planner.NewSession(req.body.userID)))
     .post('/submitWorkout', (req, res) => res.send(planner.SubmitWorkout(req.body.workouts)))
     .post('/podsearch', async (req, res) => {

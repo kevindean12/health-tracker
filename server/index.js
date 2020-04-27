@@ -14,6 +14,15 @@ app.use(function(req, res, next){
     next();
 });
 
+//authorization through headers
+app.use(function(req, res, next) {
+    const arr = (req.headers.authorization || "").split(" ");
+    if(arr.length > 1 && arr[1] != null){
+        req.userID = +arr[1];
+    }
+    next();
+});
+
 app
     .use(express.json())
     .use(express.urlencoded({ extended: true}))

@@ -238,11 +238,12 @@ export default {
         this.error = toofew;
         throw Error(toofew);
       }
-      this.CurrentGoal = await createGoal(this.minsCardio, this.minsStrength, numDays);
+      this.CurrentGoal = await Planner.createGoal(this.minsCardio, this.minsStrength, numDays);
+      console.log(this.CurrentGoal);
     },
     async search(keywords, page){
       try {
-        const results = await searchPodcasts(keywords, page);
+        const results = await Planner.searchPodcasts(keywords, page);
         this.searchResults = results.body.results;
       } catch (error) {
         this.error = error;
@@ -250,7 +251,7 @@ export default {
     },
     addToPlaylist(resultIndex){
       const in_pod = this.searchResults[resultIndex];
-      const out_pod = new Podcast(in_pod.podcast_title_original, in_pod.title_original, in_pod.audio_length_sec, in_pod.audio);
+      const out_pod = {title: in_pod.podcast_title_original, episodeTitle: in_pod.title_original, duration: in_pod.audio_length_sec, audio: in_pod.audio};
       out_pod.coverArt = in_pod.image;
       this.UserPlaylist.push(out_pod);
     },

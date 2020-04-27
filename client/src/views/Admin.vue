@@ -103,7 +103,7 @@
 </template>
 
 <script>
-//import { Exercises, Exercise } from "../models/Planner";
+
 import Planner from "../models/Planner";
 
 export default {
@@ -117,7 +117,7 @@ export default {
     }),
     methods: {
         add() {
-            Exercises.push(new Planner.Exercise(this.name, this.description, this.category, this.time));
+            Exercises.push({name: this.name, description: this.description, category: this.category, time: this.time});
         },
         deleteExercise(index){
             Exercises.splice(index, 1);

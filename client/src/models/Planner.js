@@ -1,20 +1,20 @@
 import sjFetch from "./sjFetch";
-class Exercise {
-    constructor(name, description, category, mins){
-        this.name = name;
-        this.description = description;
-        this.category = category;
-        this.time = mins;
-    }
-}
+// class Exercise {
+//     constructor(name, description, category, mins){
+//         this.name = name;
+//         this.description = description;
+//         this.category = category;
+//         this.time = mins;
+//     }
+// }
 
-class Goal{
-    constructor(cardioMinutes, strengthMinutes, days){
-        this.cardioMinutes = cardioMinutes;
-        this.strengthMinutes = strengthMinutes;
-        this.days = days;
-    }
-}
+// class Goal{
+//     constructor(cardioMinutes, strengthMinutes, days){
+//         this.cardioMinutes = cardioMinutes;
+//         this.strengthMinutes = strengthMinutes;
+//         this.days = days;
+//     }
+// }
 
 // export class Workout {
 //     constructor(exercises, playlist){
@@ -32,18 +32,18 @@ class Goal{
 // }
 
 //a node for a linked list containing information about the podcast episode
-class Podcast{
-    constructor(title, episodeTitle, durationSeconds, audio){
-        this.title = title;
-        this.episodeTitle = episodeTitle;
-        this.duration = durationSeconds;
-        this.remaining = durationSeconds;
-        this.coverArt = '';
-        this.audio = audio;
-        this.next = null;
-        this.prev = null;
-    }
-}
+// class Podcast{
+//     constructor(title, episodeTitle, durationSeconds, audio){
+//         this.title = title;
+//         this.episodeTitle = episodeTitle;
+//         this.duration = durationSeconds;
+//         this.remaining = durationSeconds;
+//         this.coverArt = '';
+//         this.audio = audio;
+//         this.next = null;
+//         this.prev = null;
+//     }
+// }
 
 
 
@@ -76,7 +76,6 @@ export default {
         const results = await sjFetch('/plan/podsearch', {keywords: keywords, page: page});
         return results;
     },
-    Exercise,
     async start(){
         const response = await sjFetch('/plan');
         this.Exercises = response.Excercises;
