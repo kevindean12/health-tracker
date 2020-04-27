@@ -41,14 +41,9 @@ pod1.coverArt = "https://cdn-images-1.listennotes.com/podcasts/fivethirtyeight-p
 pod2.coverArt = "https://cdn-images-1.listennotes.com/podcasts/football-weekly-the-guardian-cH8YOyjI9xq.300x300.jpg";
 
 //Arrays to be replaced by DB
-const UserPlaylists = [{UserID: 0, Playlist: [pod1, pod2]}];
+const UserPlaylists = [{UserID: 1, Playlist: [pod1, pod2]}];
 //stores the workout schedule for a user as {UserID: 0, WorkoutSchedule: []}
 const UserWorkouts = [];
-
-function NewSession(userID) {
-    const user = users.GetUser(userID);
-    return MyWorkouts;
-}
 
 function SubmitWorkout(userID, workouts) {
     if(UserWorkouts.some(x => x.UserID == userID)){
@@ -98,6 +93,6 @@ function createGoal(cardio, strength, days){
 
 
 module.exports = {
-    UserWorkouts, NewSession, SubmitWorkout, searchPodcasts,
-    createGoal, UserPlaylists, addToPlaylist
+    UserWorkouts: UserWorkouts, SubmitWorkout, searchPodcasts,
+    createGoal, UserPlaylists: UserPlaylists, addToPlaylist
 };

@@ -77,10 +77,23 @@ export default {
         return results;
     },
     async start(){
+        this.Exercises = [];
+        this.UserPlaylist = [];
+        this.WorkoutSchedule = [];
         const response = await sjFetch('/plan');
-        this.Exercises = response.Excercises;
-        this.UserPlaylist = response.UserPlaylist;
-        this.WorkoutSchedule = response.Workouts;
+        for(let i = 0; i < response.Exercises.length; i++){
+            this.Exercises.push(response.Exercises[i]);
+        }
+        for(let i = 0; i < response.UserPlaylist.length; i++){
+            this.UserPlaylist.push(response.UserPlaylist[i]);
+        }
+        for(let i = 0; i < response.Workouts.length; i++){
+            this.WorkoutSchedule.push(response.Workouts[i]);
+        }
+        // this.Exercises = JSON.parse(JSON.stringify(response.Excercises));
+        // this.UserPlaylist = JSON.parse(JSON.stringify(response.UserPlaylist));
+        // this.WorkoutSchedule = JSON.parse(JSON.stringify(response.Workouts));
+        console.log(this.Exercises, this.UserPlaylist, this.WorkoutSchedule);
     },
     WorkoutSchedule: [],
     async createNewWorkout(workoutSchedule){

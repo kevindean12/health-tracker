@@ -8,13 +8,20 @@ const router = express.Router();
 router
     .get('/', (req, res) => {
         console.log({userID: req.userID});
+        let playlist = [];
+        let workouts = [];
+        if(planner.UserWorkouts.find(x => x.UserID == req.userID)){
+            workouts = JSON.parse(JSON.stringify(planner.UserWorkouts.find(x => x.UserID == req.userID)));
+        }
+        if(planner.UserPlaylists.find(x => x.UserID == req.userID)){
+            playlist = JSON.parse(JSON.stringify(planner.UserPlaylists.find(x => x.UserID == req.userID))).Playlist;
+        }
         res.send({
-            Exercises: exercises.exerciseList,
-            UserPlaylist: planner.UserPlaylists,
-            Workouts: planner.UserWorkouts
+            Exercises: JSON.parse(JSON.stringify(exercises.exerciseList)),
+            UserPlaylist: playlist,
+            Workouts: workouts
         });
     })
-    .post('/newsession', (req, res) => res.send(planner.NewSession(req.body.userID)))
     .post('/submitWorkout', (req, res) => res.send(planner.SubmitWorkout(req.body.workouts)))
     .post('/podsearch', async (req, res) => {
         const results = await planner.searchPodcasts(req.body.keywords, req.body.page);
