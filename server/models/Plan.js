@@ -42,8 +42,17 @@ pod2.coverArt = "https://cdn-images-1.listennotes.com/podcasts/football-weekly-t
 
 //Arrays to be replaced by DB
 const UserPlaylists = [{UserID: 1, Playlist: [pod1, pod2]}];
+
 //stores the workout schedule for a user as {UserID: 0, Workouts: []}
 const UserWorkouts = [];
+
+//stores each user's exercise goal as {UserID: 0, Cardio: 100, Strength: 50, Days: 5}
+const UserGoals = [];
+
+//stores record of user's completed exercises as {UserID: 0, Goals: 2, Jog: 128, Pushups: 45, ...}
+//Goals: # of user-set goals completed
+//each exercise is number of minutes completed
+const UserCompleted = [];
 
 function SubmitWorkout(userID, workout) {
     if(UserWorkouts.some(x => x.UserID == userID)){
@@ -81,6 +90,7 @@ async function searchPodcasts(keywords, page){
     return await response.toJSON();
 }
 
+//TODO make this actually store in UserGoals by UserID
 function createGoal(cardio, strength, days){
     const goal = {
         cardioMinutes: cardio*days,
@@ -90,8 +100,47 @@ function createGoal(cardio, strength, days){
     return goal;
 }
 
+function exerciseProgress(userID, iWorkout, jExercise, completed){
+    const exercise = UserWorkouts.find(x => x.UserID == userID).Workouts[iWorkout].Exercises[jExercise];
+    exercise.time -= completed;
+    
+    const progress = UserCompleted.find(x => x.UserID == userID);
+    if(progress){
+        progress[exercise.name] += completed;
+    }
+    
+
+    const goal = UserGoals.find(x => x.UserID == userID);
+    let finishedGoal = false;
+    if(goal){
+        goal[exercise.category] -= completed;
+        finishedGoal = (goal.Cardio <= 0 && goal.Strength <= 0);
+        if(finishedGoal){
+            progress.Goals++;
+        }
+    }
+    
+
+    const finishedExercise = (exercise.time <= 0);
+    if(finishedExercise){
+        const workout = UserWorkouts.find(x => x.UserID == userID).Workouts[iWorkout];
+        workout.Exercises.splice(jExercise, 1);
+    }
+
+    const finishedWorkout = (UserWorkouts.find(x => x.UserID == userID).Workouts[iWorkout].Exercises.length == 0);
+    if(finishedWorkout){
+        UserWorkouts.find(x => x.UserID == userID).Workouts.splice(iWorkout, 1);
+    }
+
+    return {
+        Exercise: finishedExercise,
+        Workout: finishedWorkout,
+        Goal: finishedGoal
+    };
+}
 
 module.exports = {
     UserWorkouts: UserWorkouts, SubmitWorkout, searchPodcasts,
-    createGoal, UserPlaylists: UserPlaylists, addToPlaylist
+    createGoal, UserPlaylists: UserPlaylists, addToPlaylist, exerciseProgress,
+    UserGoals: UserGoals, UserCompleted: UserCompleted
 };

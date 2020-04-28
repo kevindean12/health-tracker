@@ -1,6 +1,6 @@
 const express = require('express');
 
-const plan = require('../models/Plan');
+const planner = require('../models/Plan');
 const log = require('../models/Log');
 
 const router = express.Router();
@@ -8,8 +8,11 @@ const router = express.Router();
 router
     .get('/exercises', (req, res) => res.send(plan.MyWorkouts))
     .post('/updateExercise', (req, res) => {
-        log.UpdateProgress(req.body.workoutID, req.body.timeCompleted);
-        res.send(plan.MyWorkouts);
+        const response = planner.exerciseProgress(req.userID, req.body.workoutIndex, req.body.exerciseIndex, req.body.minutesCompleted);
+        res.send({
+            workouts: JSON.parse(JSON.stringify(planner.UserWorkouts.find(x => x.UserID == req.userID))).Workouts,
+            progress: JSON.parse(JSON.stringify(response))
+        });
     })
 
 module.exports = router

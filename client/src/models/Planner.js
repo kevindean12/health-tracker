@@ -92,5 +92,15 @@ export default {
     async addToPlaylist(podcast){
         const response = await sjFetch('/plan/submitpod', {podcast: podcast});
         this.UserPlaylist = JSON.parse(JSON.stringify(response));
+    },
+    async updateExerciseProgress(iWorkout, jExercise, timeCompleted){
+        const response = await sjFetch('/log/updateExercise', {
+            workoutIndex: iWorkout,
+            exerciseIndex: jExercise,
+            minutesCompleted: timeCompleted
+        });
+
+        this.WorkoutSchedule = JSON.parse(JSON.stringify(response.workouts));
+        return response.progress;
     }
 }
