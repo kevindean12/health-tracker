@@ -42,20 +42,20 @@ pod2.coverArt = "https://cdn-images-1.listennotes.com/podcasts/football-weekly-t
 
 //Arrays to be replaced by DB
 const UserPlaylists = [{UserID: 1, Playlist: [pod1, pod2]}];
-//stores the workout schedule for a user as {UserID: 0, WorkoutSchedule: []}
+//stores the workout schedule for a user as {UserID: 0, Workouts: []}
 const UserWorkouts = [];
 
-function SubmitWorkout(userID, workouts) {
+function SubmitWorkout(userID, workout) {
     if(UserWorkouts.some(x => x.UserID == userID)){
-        const workoutIter = workouts.values();
-        const workoutList = UserWorkouts.find(x => x.UserID == userID).WorkoutSchedule;
-        for(const w of workoutIter){workoutList.push(w);}
+        // const workoutIter = workout.values();
+        // const workoutList = UserWorkouts.find(x => x.UserID == userID).Workouts;
+        // for(const w of workoutIter){workoutList.push(w);}
+        UserWorkouts.find(x => x.UserID == userID).Workouts.push(JSON.parse(JSON.stringify(workout)));
     }
     else {
-        UserWorkouts.push({UserID: userID, WorkoutSchedule: workouts});
+        UserWorkouts.push({UserID: userID, Workouts: [workout]});
     }
     
-    return UserWorkouts.find(x => x.UserID == userID);
 }
 
 function addToPlaylist(userID, pod){

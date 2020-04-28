@@ -57,7 +57,7 @@
       <div class="column">
         <div class="card">
           <div class="card-header">
-            <div class="card-header-title has-text-centered">Create a playlist</div>
+            <div class="card-header-title has-text-centered">Add to your playlist</div>
           </div>
           <div class="card-content">
             <form @submit.prevent="search(searchWords,0)">
@@ -111,27 +111,7 @@
             </div>
           </div>
           <div class="card-content">
-            <p>Add exercises</p>
-            <p>Select an exercise and how long you plan to do it, then add podcast episodes. Finally, click "create workout" to pair exercises and podcasts.</p>
-            <form @submit.prevent="createWorkout">
-              <div class="columns">
-                <div class="column">
-                  <div v-for="(exercise, i) in Planner.Exercises" :key="i">
-                    <p draggable="true"> {{exercise.name}} </p>
-                    <div class="field">
-                      <div class="control">
-                        <input type="number" placeholder="0" v-model="exerciseTime[i]"> minutes
-                      </div>
-                      <div class="control"><button @click.prevent="addExercise(exercise, i)" class="button">Submit Exercise</button></div>
-                    </div>
-                  </div>
-                </div>
-                <!-- <div class="column">
-                  <p>Added exercise: {{exerciseSelection[exerciseSelection.length-1].name}} for {{exerciseTime}} minutes </p>
-                </div> -->
-              </div>
-              
-              <hr>
+            
               <p class="has-text-centered"><strong>Your playlist</strong></p>
               <div draggable="true" class="columns" v-for="(pod, i) in Planner.UserPlaylist" :key="i">
                 <div class="column is-2">
@@ -154,10 +134,25 @@
                   </div>
                 </div> -->
               </div>
-              <div class="field">
-                <div class="control"><button role="submit" class="button">Create Workout</button></div>
+              <hr>
+              <p>Add exercises</p>
+              <span> {{error}} </span>
+              <div class="columns">
+                <div class="column">
+                  <div v-for="(exercise, i) in Planner.Exercises" :key="i">
+                    <p draggable="true"> {{exercise.name}} </p>
+                    <div class="field">
+                      <div class="control">
+                        <input type="number" placeholder="0" v-model="exerciseTime[i]"> minutes
+                      </div>
+                      <div class="control"><button @click.prevent="addExercise(exercise, i)" class="button">Add to workout</button></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="column">
+                  <p>Added exercise: {{exerciseSelection[exerciseSelection.length-1].name}} for {{exerciseTime}} minutes </p>
+                </div> -->
               </div>
-            </form>
           </div>
         </div>
       </div>
@@ -171,7 +166,16 @@
             </div>
           </div>
           <div class="card-content">
-            <div class="columns">
+            <div v-for="(pod, i) in WorkoutSchedule.Podcasts" :key="i">
+              <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
+            </div>
+            <p class="content"> Total podcast time: {{Math.floor(maxWorkoutTimeSecs/60)}}:{{maxWorkoutTimeSecs%60}} </p>
+            <progress class="progress is-medium" :value="totalExerciseTime" :max="maxWorkoutTimeSecs"></progress>
+            <div v-for="(exercise, j) in WorkoutSchedule.Exercises" :key="j + 1000">
+              <div class="tag is-black is-large"> {{exercise.name}} for {{exercise.time}} minutes </div>
+            </div>
+            
+            <!-- <div class="columns">
               <div class="column">
                 <strong>Exercise</strong>
               </div>
@@ -181,9 +185,10 @@
               <div class="column">
                 <strong>Amount of podcast when you're done</strong>
               </div>
-            </div>
-            <div class="workouts" v-for="(workout, i) in Planner.WorkoutSchedule" :key="i">
-              <div class="columns" v-for="pod in workout.podcasts" :key="pod.title">
+            </div> -->
+
+            <!-- <div>
+              <div class="columns" v-for="pod in WorkoutSchedule.Podcasts" :key="pod.title">
                 <div class="column">
                   <p> {{workout.exercise.name}} </p>
                 </div>
@@ -194,9 +199,12 @@
                  {{Math.floor(pod.duration/60)-Math.floor(pod.remaining/60)}}mins <progress class="progress" :value="((pod.duration-pod.remaining)/pod.duration)*100" max="100"></progress>
                 </div>
               </div>
-              <hr>
-            </div>
-            
+            </div> -->
+            <form v-if="WorkoutSchedule.Podcasts.length > 0" @submit.prevent="createWorkout">  
+              <div class="field">
+                <div class="control"><button role="submit" class="button">Save This Workout!</button></div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -222,10 +230,28 @@ export default {
     exerciseSelection: [],
     workoutExerciseTime: 0,
     workoutPodcasts: [],
+    WorkoutSchedule: {Exercises: [], Podcasts: []},
     error: '',
     Planner,
     CurrentGoal: {}
   }),
+  computed: {
+    maxWorkoutTimeSecs: function() {
+      let time = 0;
+      for(let i = 0; i < this.WorkoutSchedule.Podcasts.length; i++){
+        time += this.WorkoutSchedule.Podcasts[i].duration;
+      }
+      console.log("time: ", time);
+      return time;
+    },
+    totalExerciseTime: function() {
+      let time = 0;
+      for(let i = 0; i < this.WorkoutSchedule.Exercises.length; i++){
+        time += this.WorkoutSchedule.Exercises[i].time*60;
+      }
+      return time;
+    }
+  },
   methods: {
     async createGoal(){
       const numDays = this.daysToExercise;
@@ -257,59 +283,67 @@ export default {
       Planner.addToPlaylist(outPod);
     },
     addToWorkoutPlaylist(index){
-      this.workoutPodcasts.push(JSON.parse(JSON.stringify(Planner.UserPlaylist[index])));
-      alert(`Added episode to workout playlist.`);
+      this.WorkoutSchedule.Podcasts.push(JSON.parse(JSON.stringify(Planner.UserPlaylist[index])));
     },
     removeFromPlaylist(index){
-      Planner.UserPlaylist.splice(index, 1);
+      //Planner.UserPlaylist.splice(index, 1);
     },
-    async createWorkout(){
-      let exercisesToRemove = 0;
-      for(let j = 0; j < this.exerciseSelection.length; j++){
-        let exTime = this.exerciseSelection[j].time*60;
-        let count = 0;
-        this.WorkoutSchedule.push({
-          exercise: JSON.parse(JSON.stringify(this.exerciseSelection[j])),
-          podcasts: [JSON.parse(JSON.stringify(this.workoutPodcasts[0]))]
-        });
-        let len = this.WorkoutSchedule.length-1;
-        let workoutPodsIndex = 1;
-        for(let i = 0; i < this.WorkoutSchedule[len].podcasts.length; i++){
-          if(this.WorkoutSchedule[len].podcasts[i].remaining >= exTime){
-            this.WorkoutSchedule[len].podcasts[i].remaining -= exTime;
-            this.workoutPodcasts[workoutPodsIndex-1].remaining -= exTime;
-            exercisesToRemove++;
-            break;
-          }
-          else { //exercise time is greater than remaining podcast time
-            exTime -= this.WorkoutSchedule[len].podcasts[i].remaining;
-            this.WorkoutSchedule[len].podcasts[i].remaining = 0;
-            if(workoutPodsIndex >= this.workoutPodcasts.length){
-              count++;
-              break;
-            }
-            this.WorkoutSchedule[len].podcasts.push(JSON.parse(JSON.stringify(this.workoutPodcasts[workoutPodsIndex++])));
-            count++;
-          }
-        }
-        if(exTime <= 0){
-            exercisesToRemove++;
-          }
-        else{
-          this.exerciseSelection[j].time = Math.floor(exTime/60);
-        }
-        this.workoutPodcasts.splice(0, count);
-        this.exerciseSelection.splice(0, exercisesToRemove);
-      }
-      console.log("workout podcasts:", this.workoutPodcasts);
-      console.log("workouts", this.WorkoutSchedule);
-      console.log("exercises: ", this.exerciseSelection);
+    // createWorkout(){
+    //   let exercisesToRemove = 0;
+    //   console.log(this.exerciseSelection.length);
+    //   for(let j = 0; j < this.exerciseSelection.length; j++){
+    //     let exTime = this.exerciseSelection[j].time*60;
+    //     let count = 0;
+    //     this.WorkoutSchedule.push({
+    //       exercise: JSON.parse(JSON.stringify(this.exerciseSelection[j])),
+    //       podcasts: [JSON.parse(JSON.stringify(this.workoutPodcasts[0]))]
+    //     });
+    //     let len = this.WorkoutSchedule.length-1;
+    //     let workoutPodsIndex = 1;
+    //     for(let i = 0; i < this.WorkoutSchedule[len].podcasts.length; i++){
+    //       if(this.WorkoutSchedule[len].podcasts[i].remaining >= exTime){
+    //         this.WorkoutSchedule[len].podcasts[i].remaining -= exTime;
+    //         this.workoutPodcasts[workoutPodsIndex-1].remaining -= exTime;
+    //         exercisesToRemove++;
+    //         break;
+    //       }
+    //       else { //exercise time is greater than remaining podcast time
+    //         exTime -= this.WorkoutSchedule[len].podcasts[i].remaining;
+    //         this.WorkoutSchedule[len].podcasts[i].remaining = 0;
+    //         if(workoutPodsIndex >= this.workoutPodcasts.length){
+    //           count++;
+    //           break;
+    //         }
+    //         this.WorkoutSchedule[len].podcasts.push(JSON.parse(JSON.stringify(this.workoutPodcasts[workoutPodsIndex++])));
+    //         count++;
+    //       }
+    //     }
+    //     if(exTime <= 0){
+    //         exercisesToRemove++;
+    //       }
+    //     else{
+    //       this.exerciseSelection[j].time = Math.floor(exTime/60);
+    //     }
+    //     this.workoutPodcasts.splice(0, count);
+    //     this.exerciseSelection.splice(0, exercisesToRemove);
+    //   }
+    //   Planner.addNewWorkouts(this.WorkoutSchedule);
+    //   console.log("workout podcasts:", this.workoutPodcasts);
+    //   console.log("workouts", this.WorkoutSchedule);
+    //   console.log("exercises: ", this.exerciseSelection);
+    // },
+    createWorkout(){
+      Planner.addNewWorkout(this.WorkoutSchedule);
     },
     addExercise(exercise, i){
       const ex = JSON.parse(JSON.stringify(exercise));
       ex.time = this.exerciseTime[i];
-      this.exerciseSelection.push(ex);
-      alert(`Added ${ex.name} for ${ex.time} minutes to exercise list.`);
+      if(this.maxWorkoutTimeSecs >= (ex.time*60 + this.totalExerciseTime)){
+        this.WorkoutSchedule.Exercises.push(ex);
+      }
+      else{
+        this.error = "You need more podcasts to add that exercise to your workout! Add another podcast to your workout first.";
+      }
     },
     
   }

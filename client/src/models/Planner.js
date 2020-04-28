@@ -84,9 +84,10 @@ export default {
         console.log(this.Exercises, this.UserPlaylist, this.WorkoutSchedule);
     },
     WorkoutSchedule: [],
-    async createNewWorkout(workoutSchedule){
-        const workouts = await sjFetch('/plan/submitWorkout', {workouts: workoutSchedule});
-        return workouts;
+    async addNewWorkout(workoutSchedule){
+        const response = await sjFetch('/plan/submitWorkout', {workout: workoutSchedule});
+        console.log("response from adding workouts:", response);
+        this.WorkoutSchedule = JSON.parse(JSON.stringify(response));
     },
     async addToPlaylist(podcast){
         const response = await sjFetch('/plan/submitpod', {podcast: podcast});
