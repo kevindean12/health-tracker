@@ -28,6 +28,9 @@ router
         res.send(results);
     })
     .post('/creategoal', (req, res) => res.send(planner.createGoal(req.body.cardioMinutes, req.body.strengthMinutes, req.body.days)))
-    .post('/submitpod', (req, res) => res.send(planner.addToPlaylist(req.body.userID, req.body.podcast)))
+    .post('/submitpod', (req, res) => {
+        planner.addToPlaylist(req.userID, req.body.podcast);
+        res.send(JSON.parse(JSON.stringify(planner.UserPlaylists.find(x => x.UserID == req.userID))).Playlist);
+    })
 
 module.exports = router;

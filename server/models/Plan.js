@@ -65,7 +65,6 @@ function addToPlaylist(userID, pod){
     else {
         UserPlaylists.push({UserID: userID, Playlist: [pod]});
     }
-    return UserPlaylists.find(x => x.UserID == userID);
 }
 
 async function searchPodcasts(keywords, page){

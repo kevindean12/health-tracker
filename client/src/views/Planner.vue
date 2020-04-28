@@ -116,7 +116,7 @@
             <form @submit.prevent="createWorkout">
               <div class="columns">
                 <div class="column">
-                  <div v-for="(exercise, i) in Exercises" :key="i">
+                  <div v-for="(exercise, i) in Planner.Exercises" :key="i">
                     <p draggable="true"> {{exercise.name}} </p>
                     <div class="field">
                       <div class="control">
@@ -133,7 +133,7 @@
               
               <hr>
               <p class="has-text-centered"><strong>Your playlist</strong></p>
-              <div draggable="true" class="columns" v-for="(pod, i) in UserPlaylist" :key="i">
+              <div draggable="true" class="columns" v-for="(pod, i) in Planner.UserPlaylist" :key="i">
                 <div class="column is-2">
                   <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
                 </div>
@@ -182,7 +182,7 @@
                 <strong>Amount of podcast when you're done</strong>
               </div>
             </div>
-            <div class="workouts" v-for="(workout, i) in WorkoutSchedule" :key="i">
+            <div class="workouts" v-for="(workout, i) in Planner.WorkoutSchedule" :key="i">
               <div class="columns" v-for="pod in workout.podcasts" :key="pod.title">
                 <div class="column">
                   <p> {{workout.exercise.name}} </p>
@@ -223,9 +223,7 @@ export default {
     workoutExerciseTime: 0,
     workoutPodcasts: [],
     error: '',
-    Exercises: Planner.Exercises,
-    UserPlaylist: Planner.UserPlaylist,
-    WorkoutSchedule: Planner.WorkoutSchedule,
+    Planner,
     CurrentGoal: {}
   }),
   methods: {
@@ -253,17 +251,17 @@ export default {
       }
     },
     addToPlaylist(resultIndex){
-      const in_pod = this.searchResults[resultIndex];
-      const out_pod = {title: in_pod.podcast_title_original, episodeTitle: in_pod.title_original, duration: in_pod.audio_length_sec, audio: in_pod.audio};
-      out_pod.coverArt = in_pod.image;
-      this.UserPlaylist.push(out_pod);
+      const inPod = this.searchResults[resultIndex];
+      const outPod = {title: inPod.podcast_title_original, episodeTitle: inPod.title_original, duration: inPod.audio_length_sec, audio: inPod.audio, coverArt: inPod.image};
+      // this.UserPlaylist.push(out_pod);
+      Planner.addToPlaylist(outPod);
     },
     addToWorkoutPlaylist(index){
-      this.workoutPodcasts.push(JSON.parse(JSON.stringify(this.UserPlaylist[index])));
+      this.workoutPodcasts.push(JSON.parse(JSON.stringify(Planner.UserPlaylist[index])));
       alert(`Added episode to workout playlist.`);
     },
     removeFromPlaylist(index){
-      this.UserPlaylist.splice(index, 1);
+      Planner.UserPlaylist.splice(index, 1);
     },
     async createWorkout(){
       let exercisesToRemove = 0;

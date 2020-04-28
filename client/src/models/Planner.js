@@ -88,8 +88,8 @@ export default {
         const workouts = await sjFetch('/plan/submitWorkout', {workouts: workoutSchedule});
         return workouts;
     },
-    async addToPlaylist(workoutPodcasts){
-        const playlist = await sjFetch('/plan/submitpod');
-        return playlist;
+    async addToPlaylist(podcast){
+        const response = await sjFetch('/plan/submitpod', {podcast: podcast});
+        this.UserPlaylist = JSON.parse(JSON.stringify(response));
     }
 }
