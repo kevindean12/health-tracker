@@ -32,47 +32,54 @@ function getFriend(userID, friendID){
 }
 
 function requestFriend(userID, friendID){
-    const user = FriendRequests.find(x => x.UserID == userID);
+    const user = FriendRequests.find(x => x.UserID == friendID);
     if(user){
-        if(!user.Requests.find(x => x == friendID)){
-            user.Requests.push(friendID);
+        if(!user.Requests.find(x => x == userID)){
+            user.Requests.push(userID);
         }
     }
     else{
         FriendRequests.push({
-            UserID: userID,
-            Requests: [friendID]
+            UserID: friendID,
+            Requests: [userID]
         });
     }
-    
+    console.log(FriendRequests);
     return getFriendRequests(userID);
 }
 
 function approveFriend(userID, friendID){
+    addFriend(userID, friendID);
+    addFriend(friendID, userID);
+    completeFriendRequest(userID, friendID);
+    completeFriendRequest(friendID, userID);
+    console.log(UserFriends);
+    console.log(FriendRequests);
+    return getFriendRequests(userID);
+}
+
+function addFriend(userID, friendID){
     const results = UserFriends.find(x => x.UserID == userID);
     if(results){
         if(!results.Friends.some(x => x == friendID)){
             results.Friends.push(friendID);
-            const userFR = FriendRequests.find(x => x.UserID == userID);
-            const index = userFR.Requests.indexOf(friendID);
-            userFR.Requests.splice(index, 1);
-            return getFriendRequests(userID);
         }
-        else{
-            throw Error("A User friend request approved for someone who is already a friend!");
-        }
+        
     }
     else{
         UserFriends.push({
             UserID: userID,
             Friends: [friendID]
         });
-        const userFR = FriendRequests.find(x => x.UserID == userID);
+    }
+}
+
+function completeFriendRequest(userID, friendID){
+    const userFR = FriendRequests.find(x => x.UserID == userID);
+    if(userFR){
         const index = userFR.Requests.indexOf(friendID);
         userFR.Requests.splice(index, 1);
-        return getFriendRequests(userID);
     }
-
 }
 
 module.exports = {

@@ -13,7 +13,7 @@ export default {
                 this.FriendRequests.push({
                     name: results.requests[i].name,
                     email: results.requests[i].email,
-                    userID: requests.results[i].userID
+                    userID: results.requests[i].userID
                 });
             }
         }
