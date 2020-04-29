@@ -41,10 +41,10 @@
             </form>
           </div>
           <div class="column">
-            <p><strong>Current Goal for this week:</strong></p>
-            <p> {{CurrentGoal.cardioMinutes}} minutes of Cardio </p>
-            <p> {{CurrentGoal.strengthMinutes}} minutes of Strength </p>
-            <p> over {{CurrentGoal.days}} days </p>
+            <p><strong>Your Goal for this week:</strong></p>
+            <p> {{Planner.CurrentGoal.Cardio}} minutes of Cardio </p>
+            <p> {{Planner.CurrentGoal.Strength}} minutes of Strength </p>
+            <p> over {{Planner.CurrentGoal.Days}} days </p>
           </div>
         </div>
         
@@ -174,32 +174,6 @@
             <div v-for="(exercise, j) in WorkoutSchedule.Exercises" :key="j + 1000">
               <div class="tag is-black is-large"> {{exercise.name}} for {{exercise.time}} minutes </div>
             </div>
-            
-            <!-- <div class="columns">
-              <div class="column">
-                <strong>Exercise</strong>
-              </div>
-              <div class="column">
-                <strong>Podcast</strong>
-              </div>
-              <div class="column">
-                <strong>Amount of podcast when you're done</strong>
-              </div>
-            </div> -->
-
-            <!-- <div>
-              <div class="columns" v-for="pod in WorkoutSchedule.Podcasts" :key="pod.title">
-                <div class="column">
-                  <p> {{workout.exercise.name}} </p>
-                </div>
-                <div class="column">
-                  <p> {{pod.episodeTitle}} </p>
-                </div>
-                <div class="column">
-                 {{Math.floor(pod.duration/60)-Math.floor(pod.remaining/60)}}mins <progress class="progress" :value="((pod.duration-pod.remaining)/pod.duration)*100" max="100"></progress>
-                </div>
-              </div>
-            </div> -->
             <form v-if="WorkoutSchedule.Podcasts.length > 0" @submit.prevent="createWorkout">  
               <div class="field">
                 <div class="control"><button role="submit" class="button">Save This Workout!</button></div>
@@ -233,7 +207,6 @@ export default {
     WorkoutSchedule: {Exercises: [], Podcasts: []},
     error: '',
     Planner,
-    CurrentGoal: {}
   }),
   computed: {
     maxWorkoutTimeSecs: function() {
@@ -253,7 +226,7 @@ export default {
     }
   },
   methods: {
-    async createGoal(){
+    createGoal(){
       const numDays = this.daysToExercise;
       if(numDays > 7){
         const errormessage = "There are only 7 days in a week, you overachiever! Increase the time per day instead.";
@@ -265,8 +238,7 @@ export default {
         this.error = toofew;
         throw Error(toofew);
       }
-      this.CurrentGoal = await Planner.createGoal(this.minsCardio, this.minsStrength, numDays);
-      console.log(this.CurrentGoal);
+      Planner.createGoal(this.minsCardio, this.minsStrength, numDays);
     },
     async search(keywords, page){
       try {

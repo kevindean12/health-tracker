@@ -2,39 +2,6 @@ const users = require('./Users');
 const unirest = require('unirest');
 const token = require('../models/listenapi');
 
-// class Exercise {
-//     constructor(name, description, category, mins){
-//         this.name = name;
-//         this.description = description;
-//         this.category = category;
-//         this.time = mins;
-//     }
-// }
-
-// class Goal{
-//     constructor(cardioMinutes, strengthMinutes, days){
-//         this.cardioMinutes = cardioMinutes;
-//         this.strengthMinutes = strengthMinutes;
-//         this.days = days;
-//     }
-// }
-
-
-// class Podcast{
-//     constructor(title, episodeTitle, durationSeconds, audio){
-//         this.title = title;
-//         this.episodeTitle = episodeTitle;
-//         this.duration = durationSeconds;
-//         this.remaining = durationSeconds;
-//         this.coverArt = '';
-//         this.audio = audio;
-//         this.next = null;
-//         this.prev = null;
-//     }
-// }
-
-
-
 const pod1 = {title: "FiveThirtyEight Politics", episodeTitle: "What's At Stake On Super Tuesday", duration: 3332, audio: "https://www.listennotes.com/e/p/7bf87744732544d2aed2ca6a7be177c6/"};
 const pod2 = {title: "Football Weekly", episodeTitle: "Liverpool's shock loss, more City silverware and German banners - Football Weekly", duration: 4000, audio: "https://www.listennotes.com/e/p/2f1a906c34464548938fcf66a098b32f/"};
 pod1.coverArt = "https://cdn-images-1.listennotes.com/podcasts/fivethirtyeight-politics-fivethirtyeight-OhBumQJlDAT-xEJ8lSGcCvd.300x300.jpg";
@@ -90,14 +57,25 @@ async function searchPodcasts(keywords, page){
     return await response.toJSON();
 }
 
-//TODO make this actually store in UserGoals by UserID
-function createGoal(cardio, strength, days){
-    const goal = {
-        cardioMinutes: cardio*days,
-        strengthMinutes: strength*days,
-        days: days
-    };  
-    return goal;
+
+function createGoal(userID, cardio, strength, days){
+    const goal = UserGoals.find(x => x.UserID == userID);
+    if(goal){
+        goal.Cardio = cardio*days;
+        goal.Strength = strength*days;
+        goal.Days = days;
+        return {...goal, UserID: undefined};
+    }
+    else {
+        const newGoal = {
+            UserID: userID,
+            Cardio: cardio*days,
+            Strength: strength*days,
+            Days: days
+        };
+        UserGoals.push(newGoal);
+        return {...newGoal, UserID: undefined};
+    }
 }
 
 function exerciseProgress(userID, iWorkout, jExercise, completed){
