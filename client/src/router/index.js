@@ -8,6 +8,7 @@ import Login from '../views/Login.vue';
 import Profile from '../views/Profile.vue';
 import Admin from '../views/Admin.vue';
 import AdminLogin from '../views/AdminLogin';
+import Social from '../views/Social.vue';
 import { CurrentUser } from '../models/Users';
 
 Vue.use(VueRouter)
@@ -52,6 +53,12 @@ const routes = [
     path: '/profile',
     name: 'Profile',
     component: Profile,
+    meta: {needsAuth: true},
+  },
+  {
+    path: '/social',
+    name: 'Social',
+    component: Social,
     meta: {needsAuth: true},
   },
   {

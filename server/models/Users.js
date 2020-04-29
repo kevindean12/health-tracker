@@ -12,7 +12,13 @@ function Login(email, password){
 }
 
 function GetUser(userID){
-    return Users.find(x => x.UserID == userID);
+    const user = Users.find(x => x.UserID == userID);
+    return {...user, Password: undefined};
+}
+
+function FindFriend(email){
+    const friend = Users.find(x => x.Email == email);
+    return {...friend, Password: undefined};
 }
 
 function Register(email, password, confirmation){
@@ -32,4 +38,4 @@ function AdminLogin(email, password){
     return CurrentUser = user;
 }
 
-module.exports = {Login, GetUser, Register, AdminLogin}
+module.exports = {Login, GetUser, Register, AdminLogin, FindFriend}

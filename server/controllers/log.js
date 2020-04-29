@@ -1,7 +1,6 @@
 const express = require('express');
 
 const planner = require('../models/Plan');
-const log = require('../models/Log');
 
 const router = express.Router();
 

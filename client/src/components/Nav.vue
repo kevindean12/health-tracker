@@ -19,6 +19,7 @@
                     <router-link class="navbar-item" to="/planner" active-class="is-current">Plan</router-link>
                     <router-link class="navbar-item" to="/profile" active-class="is-current">My Profile</router-link>
                     <router-link class="navbar-item" to="/exerciselog" active-class="is-current">Log</router-link>
+                    <router-link class="navbar-item" to="/social" active-class="is-current">Social</router-link>
                     <span class="navbar-item">
                         <router-link class="button is-dark" to="login">
                             <span>Login</span>

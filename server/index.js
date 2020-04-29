@@ -4,6 +4,7 @@ const exerciseLog = require('./controllers/log');
 const planner = require('./controllers/planner');
 const admin = require('./controllers/admin');
 const users = require('./controllers/users');
+const social = require('./controllers/social');
 const path = require('path');
 const port = 3000;
 
@@ -32,6 +33,7 @@ app
     .use('/plan', planner)
     .use('/admin', admin)
     .use('/users', users)
+    .use('/social', social)
 
     .use((req, res) => {
         const homepath = path.join(__dirname, '/../client/dist/index.html');
