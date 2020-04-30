@@ -7,8 +7,13 @@ const router = express.Router();
 
 router
     .get('/', (req, res) => {
-        const results = social.getFriendRequests(req.userID);
-        res.send({requests: results.requests});
+        const friendRequests = social.getFriendRequests(req.userID);
+        const sharedObjects = social.getShared(req.userID);
+        console.log("shared objects: ", sharedObjects);
+        res.send({
+            requests: friendRequests.requests,
+            shared: sharedObjects
+        });
     })
     .post('/find', (req, res) => {
         const results = users.FindFriend(req.body.email);

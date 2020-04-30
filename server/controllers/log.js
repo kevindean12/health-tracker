@@ -9,7 +9,7 @@ router
     .post('/updateExercise', (req, res) => {
         const response = planner.exerciseProgress(req.userID, req.body.workoutIndex, req.body.exerciseIndex, req.body.minutesCompleted);
         res.send({
-            workouts: JSON.parse(JSON.stringify(planner.UserWorkouts.find(x => x.UserID == req.userID))).Workouts,
+            workouts: JSON.parse(JSON.stringify(planner.UserWorkouts.filter(x => x.UserID == req.userID))),
             progress: JSON.parse(JSON.stringify(response))
         });
     })

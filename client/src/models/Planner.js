@@ -6,8 +6,8 @@ export default {
     CurrentGoal: {},
     async createGoal(cardio, strength, days){
         const response = await sjFetch('/plan/creategoal', {
-            cardioMinutes: cardio*days,
-            strengthMinutes: strength*days,
+            cardioMinutes: cardio,
+            strengthMinutes: strength,
             days: days
         });
         this.CurrentGoal = {
@@ -38,9 +38,9 @@ export default {
         const response = await sjFetch('/plan/submitpod', {podcast: podcast});
         this.UserPlaylist = JSON.parse(JSON.stringify(response));
     },
-    async updateExerciseProgress(iWorkout, jExercise, timeCompleted){
+    async updateExerciseProgress(workoutID, jExercise, timeCompleted){
         const response = await sjFetch('/log/updateExercise', {
-            workoutIndex: iWorkout,
+            workoutIndex: workoutID,
             exerciseIndex: jExercise,
             minutesCompleted: timeCompleted
         });

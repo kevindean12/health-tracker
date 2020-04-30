@@ -70,7 +70,7 @@
                                 <div class="dropdown-item">
                                     Completed <input type="number" class="input" placeholder="0" v-model="completed"> minutes. 
                                 </div>
-                                <button @click.prevent="updateExercise(i, j)" class="button">
+                                <button @click.prevent="updateExercise(workout.WID, j)" class="button">
                                     Submit
                                 </button>
                             </div>
@@ -121,8 +121,8 @@ export default {
                 exerciseCard.classList.add("is-active");
             }
         },
-        async updateExercise(iWorkout, jExercise){
-            const progress = await Planner.updateExerciseProgress(iWorkout, jExercise, this.completed);
+        async updateExercise(workoutID, jExercise){
+            const progress = await Planner.updateExerciseProgress(workoutID, jExercise, this.completed);
             console.log("Progress object",progress);
             this.completed = 0;
             let congrats = "";

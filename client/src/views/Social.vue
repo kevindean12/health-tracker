@@ -3,8 +3,18 @@
       <div class="columns">
           <div class="column is-three-quarters">
             <div class="title is-2">Shared With Me</div>
-            <div class="box">
-                <!-- v-for friends' shared items -->
+            <div>
+                <div class="card" v-for="(obj, i) in Social.SharedWithMe" :key="i">
+                    <div class="card-header-title"> {{obj.post.userName}}'s {{obj.type}} </div>
+                    <div class="card-content" v-if="obj.type == 'Goal'">
+                        Cardio: {{obj.post.Cardio}}
+                        Strength: {{obj.post.Strength}}
+                        Days: {{obj.post.Days}}
+                    </div>
+                    <div v-if="obj.type == 'Workout'">
+                        Exercises: <span v-for="ex in obj.post.Exercises" :key="ex.name"> {{ex.name}} </span>
+                    </div>
+                </div>
             </div>
           </div>
           <div class="column is-one-quarter">

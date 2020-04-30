@@ -6,14 +6,30 @@ const UserFriends = [];
 
 //stores pending friend requests as {UserID: 0, Requests: [1, 2, 3]} where Requests is a list of UserIDs who have requested to be friends
 const FriendRequests = [];
+let requestID = 1;
+
+function getShared(userID){
+    const goals = planner.UserGoals.filter(x => x.Shared.includes(userID));
+    for(let i = 0; i < goals.length; i++){
+        goals[i].userName = users.GetUser(goals[i].UserID).Name;
+    }
+    const workouts = planner.UserWorkouts.filter(x => x.Shared.includes(userID));
+    for(let i = 0; i < workouts.length; i++){
+        workouts[i].userName = users.GetUser(workouts[i].UserID).Name;
+    }
+    return {
+        goals: goals,
+        workouts: workouts
+    };
+}
 
 function getFriendRequests(userID){
     const results = FriendRequests.find(x => x.UserID == userID);
     const requesters = [];
     if(results){
         for(let i = 0; i < results.Requests.length; i++){
-            const user = users.GetUser(results.Requests[i]);
-            requesters.push({name: user.Name, email: user.Email, userID: user.UserID});
+            const user = users.GetUser(results.Requests[i].userID);
+            requesters.push({name: user.Name, email: user.Email, userID: user.UserID, ID: results.Requests[i].ID});
         }
     }
     return {requests: requesters};
@@ -34,14 +50,14 @@ function getFriend(userID, friendID){
 function requestFriend(userID, friendID){
     const user = FriendRequests.find(x => x.UserID == friendID);
     if(user){
-        if(!user.Requests.find(x => x == userID)){
-            user.Requests.push(userID);
+        if(!user.Requests.find(x => x.userID == userID)){
+            user.Requests.push({userID: userID, ID: requestID++});
         }
     }
     else{
         FriendRequests.push({
             UserID: friendID,
-            Requests: [userID]
+            Requests: [{userID: userID, ID: requestID++}]
         });
     }
     console.log(FriendRequests);
@@ -77,11 +93,12 @@ function addFriend(userID, friendID){
 function completeFriendRequest(userID, friendID){
     const userFR = FriendRequests.find(x => x.UserID == userID);
     if(userFR){
-        const index = userFR.Requests.indexOf(friendID);
+        const fRequest = userFR.Requests.find(x => x.userID == friendID);
+        const index = userFR.Requests.indexOf(fRequest);
         userFR.Requests.splice(index, 1);
     }
 }
 
 module.exports = {
-    getFriendRequests, approveFriend, getFriend, requestFriend
+    getFriendRequests, approveFriend, getFriend, requestFriend, getShared
 }

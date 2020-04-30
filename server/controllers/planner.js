@@ -11,7 +11,7 @@ router
         let playlist = [];
         let workouts = [];
         if(planner.UserWorkouts.find(x => x.UserID == req.userID)){
-            workouts = JSON.parse(JSON.stringify(planner.UserWorkouts.find(x => x.UserID == req.userID))).Workouts;
+            workouts = JSON.parse(JSON.stringify(planner.UserWorkouts.filter(x => x.UserID == req.userID)));
         }
         if(planner.UserPlaylists.find(x => x.UserID == req.userID)){
             playlist = JSON.parse(JSON.stringify(planner.UserPlaylists.find(x => x.UserID == req.userID))).Playlist;
@@ -24,7 +24,7 @@ router
     })
     .post('/submitWorkout', (req, res) => {
         planner.SubmitWorkout(req.userID, req.body.workout);
-        res.send(JSON.parse(JSON.stringify(planner.UserWorkouts.find(x => x.UserID == req.userID))).Workouts);
+        res.send(JSON.parse(JSON.stringify(planner.UserWorkouts.filter(x => x.UserID == req.userID))));
     })
     .post('/podsearch', async (req, res) => {
         const results = await planner.searchPodcasts(req.body.keywords, req.body.page);

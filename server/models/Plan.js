@@ -10,11 +10,13 @@ pod2.coverArt = "https://cdn-images-1.listennotes.com/podcasts/football-weekly-t
 //Arrays to be replaced by DB
 const UserPlaylists = [{UserID: 1, Playlist: [pod1, pod2]}];
 
-//stores the workout schedule for a user as {UserID: 0, Workouts: []}
+//stores the workout schedule for a user as {UserID: 0, Exercises: [], Podcasts: [], Shared: [], ID: 1}
 const UserWorkouts = [];
+let workoutID = 1;
 
-//stores each user's exercise goal as {UserID: 0, Cardio: 100, Strength: 50, Days: 5}
+//stores each user's exercise goal as {UserID: 0, Cardio: 100, Strength: 50, Days: 5, Shared: [], ID: 2}
 const UserGoals = [];
+let goalID = 1;
 
 //stores record of user's completed exercises as {UserID: 0, Goals: 2, Jog: 128, Pushups: 45, ...}
 //Goals: # of user-set goals completed
@@ -22,16 +24,14 @@ const UserGoals = [];
 const UserCompleted = [];
 
 function SubmitWorkout(userID, workout) {
-    if(UserWorkouts.some(x => x.UserID == userID)){
-        // const workoutIter = workout.values();
-        // const workoutList = UserWorkouts.find(x => x.UserID == userID).Workouts;
-        // for(const w of workoutIter){workoutList.push(w);}
-        UserWorkouts.find(x => x.UserID == userID).Workouts.push(JSON.parse(JSON.stringify(workout)));
-    }
-    else {
-        UserWorkouts.push({UserID: userID, Workouts: [workout]});
-    }
-    
+    UserWorkouts.push({
+        UserID: userID,
+        Exercises: workout.Exercises,
+        Podcasts: workout.Podcasts,
+        Shared: [2],
+        WID: workoutID++
+    });
+    console.log("workouts: ", UserWorkouts);
 }
 
 function addToPlaylist(userID, pod){
@@ -61,8 +61,8 @@ async function searchPodcasts(keywords, page){
 function createGoal(userID, cardio, strength, days){
     const goal = UserGoals.find(x => x.UserID == userID);
     if(goal){
-        goal.Cardio = cardio*days;
-        goal.Strength = strength*days;
+        goal.Cardio = cardio;
+        goal.Strength = strength;
         goal.Days = days;
         return {...goal, UserID: undefined};
     }
@@ -71,15 +71,18 @@ function createGoal(userID, cardio, strength, days){
             UserID: userID,
             Cardio: cardio*days,
             Strength: strength*days,
-            Days: days
+            Days: days,
+            Shared: [2],
+            GID: goalID++
         };
         UserGoals.push(newGoal);
         return {...newGoal, UserID: undefined};
+        
     }
 }
 
 function exerciseProgress(userID, iWorkout, jExercise, completed){
-    const exercise = UserWorkouts.find(x => x.UserID == userID).Workouts[iWorkout].Exercises[jExercise];
+    const exercise = UserWorkouts.find(x => x.WID == iWorkout).Exercises[jExercise];
     exercise.time -= completed;
     
     const progress = UserCompleted.find(x => x.UserID == userID);
@@ -101,13 +104,15 @@ function exerciseProgress(userID, iWorkout, jExercise, completed){
 
     const finishedExercise = (exercise.time <= 0);
     if(finishedExercise){
-        const workout = UserWorkouts.find(x => x.UserID == userID).Workouts[iWorkout];
+        const workout = UserWorkouts.find(x => x.WID == iWorkout);
         workout.Exercises.splice(jExercise, 1);
     }
 
-    const finishedWorkout = (UserWorkouts.find(x => x.UserID == userID).Workouts[iWorkout].Exercises.length == 0);
+    const finishedWorkout = (UserWorkouts.find(x => x.WID == iWorkout).Exercises.length == 0);
     if(finishedWorkout){
-        UserWorkouts.find(x => x.UserID == userID).Workouts.splice(iWorkout, 1);
+        const emptyWorkout = UserWorkouts.find(x => x.WID == iWorkout);
+        const index = UserWorkouts.indexOf(emptyWorkout);
+        UserWorkouts.splice(index, 1);
     }
 
     return {
