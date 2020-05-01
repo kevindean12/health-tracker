@@ -4,6 +4,8 @@ const Users = [
     {Name: 'Soundjog', Password: '2020', Email: 'admin@soundjog.com', UserID: 0}
 ];
 
+let nextID = 3;
+
 function Login(email, password){
     const user = Users.find(x => x.Email == email);
     if(!user) throw Error('Invalid email');
@@ -21,14 +23,15 @@ function FindFriend(email){
     return {...friend, Password: undefined};
 }
 
-function Register(email, password, confirmation){
-    if(password != confirmation) {
-        throw Error('Passwords do not match!');
+function Register(name, email, password){
+    if(!Users.find(x => x.Email == email)){
+        Users.push({Name: name, Email: email, Password: password, UserID: nextID++});
+        return true;
     }
-    // if(password.length < 12){
-    //     throw Error('Password is too short');
-    // } //implement this in deployment
-    Users.push({Email: email, Password: password});
+    else{
+        throw Error("Someone is already registered with that email address!");
+    }
+    
 }
 
 function AdminLogin(email, password){
