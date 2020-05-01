@@ -7,6 +7,7 @@ export default {
     },
     FriendRequests: [],
     SharedWithMe: [],
+    Friends: [],
     async start(){
         const results = await sjFetch('/social');
         console.log("results from start social: ", results);
@@ -38,6 +39,15 @@ export default {
                 };
                 if(!this.SharedWithMe.filter(x => x.type == "Goal").some(x => x.GID == goal.GID)){
                     this.SharedWithMe.push(goal);
+                }
+            }
+            for(let i = 0; i < results.friends.length; i++){
+                const friend = {
+                    name: results.friends[i].Name,
+                    userID: results.friends[i].UserID
+                };
+                if(!this.Friends.some(x => x.userID == friend.userID)){
+                    this.Friends.push(friend);
                 }
             }
         }

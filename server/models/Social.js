@@ -99,6 +99,17 @@ function completeFriendRequest(userID, friendID){
     }
 }
 
+function getAllFriends(userID){
+    const user = UserFriends.find(x => x.UserID == userID);
+    const friends = [];
+    if(user){
+        for(let i = 0; i < user.Friends.length; i++){
+            friends.push({...users.GetUser(user.Friends[i])})
+        }
+    }
+    return friends;
+}
+
 module.exports = {
-    getFriendRequests, approveFriend, getFriend, requestFriend, getShared
+    getFriendRequests, approveFriend, getFriend, requestFriend, getShared, getAllFriends
 }

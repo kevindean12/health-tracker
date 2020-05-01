@@ -9,10 +9,12 @@ router
     .get('/', (req, res) => {
         const friendRequests = social.getFriendRequests(req.userID);
         const sharedObjects = social.getShared(req.userID);
+        const friends = social.getAllFriends(req.userID);
         console.log("shared objects: ", sharedObjects);
         res.send({
             requests: friendRequests.requests,
-            shared: sharedObjects
+            shared: sharedObjects,
+            friends: friends
         });
     })
     .post('/find', (req, res) => {
