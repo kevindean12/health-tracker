@@ -8,6 +8,36 @@ const UserFriends = [];
 const FriendRequests = [];
 let requestID = 1;
 
+function shareItem(userID, itemType, itemID){
+    const friends = UserFriends.find(x => x.UserID == userID);
+    if(!friends){
+        return true;
+    }
+    if(itemType == "Goal"){
+        const goal = planner.UserGoals.find(x => x.UserID == userID);
+        for(let i = 0; i < friends.Friends.length; i++){
+            const friend = friends.Friends[i];
+            if(!goal.Shared.includes(friend)){
+                goal.Shared.push(friend);
+            }
+        }
+        return true;
+    }
+    else if(itemType == "Workout"){
+        const workout = planner.UserWorkouts.find(x => x.WID == itemID);
+        for(let i = 0; i < friends.Friends.length; i++){
+            const friend = friends.Friends[i];
+            if(!workout.Shared.includes(friend)){
+                workout.Shared.push(friend);
+            }
+        }
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
 function getShared(userID){
     const goals = planner.UserGoals.filter(x => x.Shared.includes(userID));
     for(let i = 0; i < goals.length; i++){
@@ -111,5 +141,5 @@ function getAllFriends(userID){
 }
 
 module.exports = {
-    getFriendRequests, approveFriend, getFriend, requestFriend, getShared, getAllFriends
+    getFriendRequests, approveFriend, getFriend, requestFriend, getShared, getAllFriends, shareItem
 }

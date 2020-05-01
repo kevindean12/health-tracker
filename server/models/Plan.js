@@ -10,11 +10,11 @@ pod2.coverArt = "https://cdn-images-1.listennotes.com/podcasts/football-weekly-t
 //Arrays to be replaced by DB
 const UserPlaylists = [{UserID: 1, Playlist: [pod1, pod2]}];
 
-//stores the workout schedule for a user as {UserID: 0, Exercises: [], Podcasts: [], Shared: [], ID: 1}
+//stores the workout schedule for a user as {UserID: 0, Exercises: [], Podcasts: [], Shared: [], WID: 1}
 const UserWorkouts = [];
 let workoutID = 1;
 
-//stores each user's exercise goal as {UserID: 0, Cardio: 100, Strength: 50, Days: 5, Shared: [], ID: 2}
+//stores each user's exercise goal as {UserID: 0, Cardio: 100, Strength: 50, Days: 5, Shared: [], GID: 2}
 const UserGoals = [];
 let goalID = 1;
 
@@ -28,7 +28,7 @@ function SubmitWorkout(userID, workout) {
         UserID: userID,
         Exercises: workout.Exercises,
         Podcasts: workout.Podcasts,
-        Shared: [2],
+        Shared: [],
         WID: workoutID++
     });
     console.log("workouts: ", UserWorkouts);
@@ -72,7 +72,7 @@ function createGoal(userID, cardio, strength, days){
             Cardio: cardio*days,
             Strength: strength*days,
             Days: days,
-            Shared: [2],
+            Shared: [],
             GID: goalID++
         };
         UserGoals.push(newGoal);

@@ -4,6 +4,10 @@ export default {
     Exercises: [],
     UserPlaylist: [],
     CurrentGoal: {},
+    async share(itemInfo){
+        const response = await sjFetch('/social/share', {type: itemInfo.type, ID: itemInfo.ID});
+        return response.message;
+    },
     async createGoal(cardio, strength, days){
         const response = await sjFetch('/plan/creategoal', {
             cardioMinutes: cardio,

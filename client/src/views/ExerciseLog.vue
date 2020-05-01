@@ -1,82 +1,116 @@
 <template>
     <div class="container">
-        <div class="title is-4 has-text-centered"> {{congrats}} </div>
-        <div class="title is-2">My Workouts</div>
+        <div class="title is-2 has-text-centered"> {{congrats}} </div>
         <div class="box">
+            <div class="title is-3 has-text-centered">Listen</div>
             <div class="columns">
-                <div class="column"></div>
-                <div class="column">
+                <div class="column is-one-quarter"></div>
+                <div class="column is-half">
                     <audio controls @play="getTrackTimePlay" @pause="getTrackTimePause"  :src="currentAudio" class="has-text-centered">
                         Sorry, there's supposed to be an audio player here but your browser doesn't support HTML5!
                     </audio>
                     <div class="panel is-link">
                         <a v-for="(pod, i) in availablePodcasts" :key="i" href="#" @click="updateTrack(i)" class="panel-block">
-                            <img :src="pod.coverArt" :alt="pod.title" class="image is-32x32">
+                            <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
                             {{pod.episodeTitle}}
                         </a>
                     </div>
                 </div>
-                <div class="column"></div>
+                <div class="column is-one-quarter"></div>
             </div>
-            
         </div>
-        <div class="card" v-for="(workout, i) in Planner.WorkoutSchedule" :key="i">
-            <div v-for="(exercise, j) in workout.Exercises" :key="j">
-                <header class="card-header">
-                    <span class="card-header-title">
-                    Exercise {{j+1}} 
+        <div class="title is-3 has-text-centered">My Workouts</div>
+        <div class="columns">
+            <div class="column is-one-quarter">
+                <div class="title is-3 has-text-centered">Goal</div>
+                <div class="goal">
+                    <span class="icon fa-lg">
+                        <i class="fas fa-dumbbell"></i> 
                     </span>
-                </header>
-                <div class="card-content">
-                    <span class="title is-4 is-pulled-right"> {{exercise.time}} minutes remaining </span>
-                    <div class="columns">
-                        <div class="column">
-                            <span class="title is-4"> {{exercise.name}} </span>
-                            <span class="icon fa-lg">
-                                <i v-if="exercise.category =='Strength'" class="fas fa-dumbbell"></i>
-                                <i v-else class="fas fa-running"></i>
-                            </span>
-                            <p class="content">
-                                {{exercise.description}}
-                            </p>
-                        </div>
-                        <div class="column">
-                            
-                            <!-- <div v-for="(pod, k) in workout.Podcasts" :key="k" class="is-inline-block">
-                                <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
-                                <p>{{pod.episodeTitle}}</p>
-                                <audio @play="getTrackTimePlay" @pause="getTrackTimePause(k)" controls :src="pod.audio"></audio>
-                            </div> -->
-                            <button @click="selectExercise(j)" class="button">Work out and listen!</button>
-                            <p v-if="currentExercise == j" class="content is-success">
-                                Click on a podcast in the player, and hit play! Your time spent listening will update the time left in this exercise automatically when you stop the podcast player.
-                            </p>
-
-                        </div>
+                    <div class="title is-5 is-inline">
+                        {{Planner.CurrentGoal.Strength}} mins strength
                     </div>
                 </div>
-                <footer class="card-footer">
-                    <div class="dropdown" :id="j">
-                        <div class="dropdown-trigger">
-                            <button class="button" @click="makeActive(j)" aria-haspopup="true" aria-controls="dropdown-menu2">
-                            <span>Update Progress</span>
-                            <span class="icon is-small">
-                                <i class="fas fa-angle-down" aria-hidden="true"></i>
+                <div class="goal">
+                    <span class="icon fa-lg">
+                        <i class="fas fa-running"></i> 
+                    </span>
+                    <div class="title is-5 is-inline">
+                        {{Planner.CurrentGoal.Cardio}} mins cardio
+                    </div>
+                </div>
+                {{error}}
+                <button @click="shareGoal" class="button is-large is-link">
+                    Share Goal!
+                </button>
+            </div>
+            <div class="column is-three-quarters">
+                <div class="card" v-for="(workout, i) in Planner.WorkoutSchedule" :key="i">
+                    <div class="title is-3 has-text-centered">Workout #{{i+1}}</div>
+                    <div v-for="(exercise, j) in workout.Exercises" :key="j">
+                        <header class="card-header">
+                            <span class="card-header-title">
+                            Exercise {{j+1}} 
                             </span>
-                            </button>
-                        </div>
-                        <div class="dropdown-menu" id="dropdown-menu2" role="menu">
-                            <div class="dropdown-content">
-                                <div class="dropdown-item">
-                                    Completed <input type="number" class="input" placeholder="0" v-model="completed"> minutes. 
+                        </header>
+                        <div class="card-content">
+                            <span class="title is-4 is-pulled-right"> {{exercise.time}} minutes remaining </span>
+                            <div class="columns">
+                                <div class="column">
+                                    <span class="title is-4"> {{exercise.name}} </span>
+                                    <span class="icon fa-lg">
+                                        <i v-if="exercise.category =='Strength'" class="fas fa-dumbbell"></i>
+                                        <i v-else class="fas fa-running"></i>
+                                    </span>
+                                    <p class="content">
+                                        {{exercise.description}}
+                                    </p>
                                 </div>
-                                <button @click.prevent="updateExercise(workout.WID, j)" class="button">
-                                    Submit
-                                </button>
+                                <div class="column">
+                                    
+                                    <!-- <div v-for="(pod, k) in workout.Podcasts" :key="k" class="is-inline-block">
+                                        <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
+                                        <p>{{pod.episodeTitle}}</p>
+                                        <audio @play="getTrackTimePlay" @pause="getTrackTimePause(k)" controls :src="pod.audio"></audio>
+                                    </div> -->
+                                    <button @click="selectExercise(j)" class="button">Work out and listen!</button>
+                                    <p v-if="currentExercise == j" class="content is-success">
+                                        Click on a podcast in the player, and hit play! Your time spent listening will update the time left in this exercise automatically when you stop the podcast player.
+                                    </p>
+
+                                </div>
                             </div>
                         </div>
+                        <footer class="card-footer">
+                            <div class="dropdown" :id="j">
+                                <div class="dropdown-trigger">
+                                    <button class="button" @click="makeActive(j)" aria-haspopup="true" aria-controls="dropdown-menu2">
+                                    <span>Update Progress</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu" id="dropdown-menu2" role="menu">
+                                    <div class="dropdown-content">
+                                        <div class="dropdown-item">
+                                            Completed <input type="number" class="input" placeholder="0" v-model="completed"> minutes. 
+                                        </div>
+                                        <button @click.prevent="updateExercise(workout.WID, j)" class="button">
+                                            Submit
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </footer>
                     </div>
-                </footer>
+                    <div id="workout-btn">
+                        {{error}}
+                        <button @click="shareWorkout(workout.WID)" class="button is-large is-link">
+                            Share Workout!
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
   </div>
@@ -95,7 +129,8 @@ export default {
         trackTimeStop: 0,
         currentAudio: "",
         currentExercise: -1,
-        congrats: ""
+        congrats: "",
+        error: ""
     }),
     computed: {
         availablePodcasts: function(){
@@ -119,6 +154,18 @@ export default {
             }
             else {
                 exerciseCard.classList.add("is-active");
+            }
+        },
+        async shareGoal(){
+            const response = await Planner.share({type: "Goal", ID: Planner.CurrentGoal.GID});
+            if(response != "ok"){
+                this.error = response;
+            }
+        },
+        async shareWorkout(workoutID){
+            const response = await Planner.share({type: "Workout", ID: workoutID});
+            if(response != "ok"){
+                this.error = response;
             }
         },
         async updateExercise(workoutID, jExercise){
@@ -160,5 +207,16 @@ export default {
 </script>
 
 <style>
-
+audio{
+    width: 100%;
+}
+.goal{
+    margin-top: 5rem;
+    margin-bottom: 2rem;
+}
+#workout-btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 </style>

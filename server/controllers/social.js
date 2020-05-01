@@ -37,6 +37,15 @@ router
             requestedFriend: requestedFriend
         });
     })
+    .post('/share', (req, res) => {
+        const good = social.shareItem(req.userID, req.body.type, req.body.ID);
+        if(good){
+            res.status(200).send({message: "ok"});
+        }
+        else{
+            res.status(500).send({message: "error processing share"});
+        }
+    })
 
 
 module.exports = router;
