@@ -6,7 +6,7 @@
             <div class="columns">
                 <div class="column is-one-quarter"></div>
                 <div class="column is-half">
-                    <audio controls @play="getTrackTimePlay" @pause="getTrackTimePause"  :src="currentAudio" class="has-text-centered">
+                    <audio controls :src="currentAudio" class="has-text-centered">
                         Sorry, there's supposed to be an audio player here but your browser doesn't support HTML5!
                     </audio>
                     <div class="panel is-link">
@@ -66,19 +66,7 @@
                                         {{exercise.description}}
                                     </p>
                                 </div>
-                                <div class="column">
-                                    
-                                    <!-- <div v-for="(pod, k) in workout.Podcasts" :key="k" class="is-inline-block">
-                                        <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
-                                        <p>{{pod.episodeTitle}}</p>
-                                        <audio @play="getTrackTimePlay" @pause="getTrackTimePause(k)" controls :src="pod.audio"></audio>
-                                    </div> -->
-                                    <button @click="selectExercise(j)" class="button">Work out and listen!</button>
-                                    <p v-if="currentExercise == j" class="content is-success">
-                                        Click on a podcast in the player, and hit play! Your time spent listening will update the time left in this exercise automatically when you stop the podcast player.
-                                    </p>
-
-                                </div>
+                                
                             </div>
                         </div>
                         <footer class="card-footer">
@@ -128,7 +116,6 @@ export default {
         trackTimePlay: 0,
         trackTimeStop: 0,
         currentAudio: "",
-        currentExercise: -1,
         congrats: "",
         error: ""
     }),
@@ -184,24 +171,9 @@ export default {
             }
             this.congrats = congrats;
         },
-        getTrackTimePlay(){
-            this.trackTimePlay = Math.floor(document.getElementsByTagName("audio")[0].currentTime/60); 
-        },
-        getTrackTimePause(){ 
-            this.trackTimeStop = Math.floor(document.getElementsByTagName("audio")[0].currentTime/60);
-            const difference = this.trackTimeStop - this.trackTimePlay;
-            if(difference > 0){
-                this.completed += difference;
-                this.updateExercise(this.currentExercise);
-            }
-        },
         updateTrack(index){
             this.currentAudio = this.availablePodcasts[index].audio;
         },
-        selectExercise(i){
-            console.log("current exercise is now: " + i);
-            this.currentExercise = i;
-        }
     }
 }
 </script>
