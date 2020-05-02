@@ -19,3 +19,8 @@ export async function Register(name, email, password, confirmation){
     const success = await sjFetch('/users/register', {name: name, email: email, password: password});
     return success;
 }
+
+export function Logout(){
+    this.$router.push('/login');
+    return CurrentUser = null;
+}

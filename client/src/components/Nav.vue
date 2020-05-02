@@ -20,13 +20,21 @@
                     <router-link class="navbar-item" to="/profile" active-class="is-current">My Profile</router-link>
                     <router-link class="navbar-item" to="/exerciselog" active-class="is-current">Log</router-link>
                     <router-link class="navbar-item" to="/social" active-class="is-current">Social</router-link>
-                    <span class="navbar-item">
+                    <span v-if="user == null" class="navbar-item">
                         <router-link class="button is-dark" to="login">
                             <span>Login</span>
                             <span class="icon">
                             <i class="fas fa-play"></i>
                             </span>
                         </router-link>
+                    </span>
+                    <span v-else class="navbar-item">
+                        <button @click.prevent="Logout" class="button is-dark">
+                            <span>Logout</span>
+                            <span class="icon">
+                            <i class="fas fa-sign-out-alt"></i>
+                            </span>
+                        </button>
                     </span>
                 </div>
             </div>
@@ -35,10 +43,21 @@
 </template>
 
 <script>
+import {CurrentUser, Logout} from '../models/Users';
 export default {
     data: () => ({
         isOpen: false,
+        user: null
     }),
+    watch:{
+        $route(to, from){
+            console.log("change in route");
+            this.user = CurrentUser;
+        }
+    },
+    methods: {
+        Logout
+    }
 }
 </script>
 
