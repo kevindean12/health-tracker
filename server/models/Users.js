@@ -1,61 +1,88 @@
-const Users = [
-    {Name: 'Kevin', Password: '2020', Email: 'kevin@notmail.com', UserID: 1},
-    {Name: 'Philbert', Password: '2020', Email: 'philbert@notmail.com', UserID: 2},
-    {Name: 'Soundjog', Password: '2020', Email: 'admin@soundjog.com', UserID: 0}
-];
+const mongoose = require('mongoose');
 
-let nextID = 3;
+const UserSchema = new mongoose.Schema({
+    Name: {
+        type: String,
+        required: true
+    },
+    Password: {
+        type: String,
+        required: true
+    },
+    Email: {
+        type: String,
+        required: true
+    },
+    UserID: {
+        type: Number,
+        required: true
+    }
+});
 
-function Login(email, password){
-    const user = Users.find(x => x.Email == email);
-    if(!user) throw Error('Invalid email');
-    if(user.Password != password) throw Error('Invalid password');
+const User = mongoose.model('User', UserSchema);
+
+async function Login(email, password){
+    //const user = Users.find(x => x.Email == email);
+    const user = await User.findOne({"Email": email, "Password": password});
+    if(!user) throw Error('Invalid credentials');
     return user;
 }
 
-function GetUser(userID){
-    const user = Users.find(x => x.UserID == userID);
-    return {...user, Password: undefined};
+async function GetUser(userID){
+    const user = await User.findOne({UserID: userID});
+    return {Name: user.Name, Email: user.Email, UserID: user.UserID};
 }
 
-function FindFriend(email){
-    const friend = Users.find(x => x.Email == email);
-    return {...friend, Password: undefined};
+async function FindFriend(email){
+    const friend = await User.findOne({Email: email});
+    return {Name: user.Name, Email: user.Email, UserID: user.UserID};
 }
 
-function Register(name, email, password){
-    if(!Users.find(x => x.Email == email)){
-        Users.push({Name: name, Email: email, Password: password, UserID: nextID++});
-        return true;
+
+async function Register(name, email, password){
+    const checkUser = await User.findOne({"Email": email});
+    if(!checkUser){
+        let uid = Math.floor(Math.random()*10000 + 1);
+        let uniqueID = await User.findOne({UserID: uid});
+        while(uniqueID != null){
+            uid++;
+            uniqueID = await User.findOne({UserID: uid});
+        }
+        const newUser = new User({
+            Name: name,
+            Email: email,
+            Password: password,
+            UserID: uid
+        });
+        return await newUser.save();
     }
-    else{
-        throw Error("Someone is already registered with that email address!");
-    }
+    else throw Error("Someone is already registered with that email address!");
     
 }
 
-function AdminLogin(email, password){
+async function AdminLogin(email, password){
     if(email != 'admin@soundjog.com') throw Error('Invalid credentials');
-    const user = Users.find(x => x.Email == 'admin@soundjog.com');
+    const user = await User.findOne({Email: "admin@soundjog.com"});
     if(user.Password != password) throw Error('Invalid credentials');
-    return CurrentUser = user;
+    return {Name: user.Name, Email: user.Email, UserID: user.UserID};
 }
 
-function ChangeName(userID, name){
-    const user = Users.find(x => x.UserID == userID);
+async function ChangeName(userID, name){
+    const user = await User.findOne({UserID: userID});
     if(user){
         user.Name = name;
-        return user.Name;
+        return await user.save();
     }
     else {
         throw Error("User not found");
     }
 }
 
-function ChangePassword(userID, password){
-    const user = Users.find(x => x.UserID == userID);
+async function ChangePassword(userID, password){
+    const user = await User.findOne({UserID: userID});
     if(user){
         user.Password = password;
+        return await user.save();
     }
     else throw Error("User not found");
 }

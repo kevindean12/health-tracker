@@ -9,10 +9,10 @@ router
     .get('/', (req, res) => res.send({
         Exercises: exercises.exerciseList
     }))
-    .post('/login', (req, res) => {
+    .post('/login', async (req, res) => {
         try{
-            const user = users.AdminLogin(req.body.email, req.body.password);
-            res.send({...user, Password: undefined});
+            const user = await users.AdminLogin(req.body.email, req.body.password);
+            res.send(user);
         } catch(error){
             res.status(401).send({message: error.message});
         }

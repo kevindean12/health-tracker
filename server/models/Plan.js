@@ -1,6 +1,6 @@
 const users = require('./Users');
 const unirest = require('unirest');
-const token = require('../models/listenapi');
+const token = require('../models/listenapi').token;
 
 const pod1 = {title: "FiveThirtyEight Politics", episodeTitle: "What's At Stake On Super Tuesday", duration: 3332, audio: "https://www.listennotes.com/e/p/7bf87744732544d2aed2ca6a7be177c6/"};
 const pod2 = {title: "Football Weekly", episodeTitle: "Liverpool's shock loss, more City silverware and German banners - Football Weekly", duration: 4000, audio: "https://www.listennotes.com/e/p/2f1a906c34464548938fcf66a098b32f/"};

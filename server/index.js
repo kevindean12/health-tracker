@@ -1,5 +1,7 @@
-const express = require("express");
+const express = require('express');
 const app = express();
+const mongoose = require('mongoose');
+const db = require('./models/listenapi').mongoURI;
 const exerciseLog = require('./controllers/log');
 const planner = require('./controllers/planner');
 const admin = require('./controllers/admin');
@@ -7,6 +9,11 @@ const users = require('./controllers/users');
 const social = require('./controllers/social');
 const path = require('path');
 const port = 3000;
+
+//mongoDB
+mongoose.connect(db, {useNewUrlParser: true, useUnifiedTopology: true})
+    .then(console.log("MongoDB connected"))
+    .catch(error => console.log(error));
 
 //CORS
 app.use(function(req, res, next){
@@ -17,6 +24,7 @@ app.use(function(req, res, next){
 
 //authorization through headers
 app.use(function(req, res, next) {
+    console.log(req.headers.authorization);
     const arr = (req.headers.authorization || "").split(" ");
     if(arr.length > 1 && arr[1] != null){
         req.userID = +arr[1];
