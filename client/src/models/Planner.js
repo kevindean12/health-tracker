@@ -51,5 +51,23 @@ export default {
 
         this.WorkoutSchedule = JSON.parse(JSON.stringify(response.workouts));
         return response.progress;
+    },
+    async createExercise(name, description, category, time){
+        const response = await sjFetch('/admin/addExercise', {
+            newExercise: {
+                name: name,
+                description: description,
+                category: category,
+                time: time
+            }
+        });
+        return response.added;
+    },
+    async deleteExercise(name){
+        await sjFetch('/admin/deleteExercise', {name: name});
+    },
+    async editExercise(name, updated){
+        const response = await sjFetch('/admin/editExercise', {name: name, updated: updated});
+        return response.updated;
     }
 }

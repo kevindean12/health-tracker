@@ -1,6 +1,17 @@
 <template>
     <div class="container">
         <h1 class="title is-4">Manage Available Exercises</h1>
+        <div v-if="added != null">
+            <p class="title is-6">
+                Added new exercise:
+                <br> 
+                {{added.name}}
+                <br>
+                {{added.category}}
+                <br>
+                {{added.description}}
+            </p>
+        </div>
         <form class="box" @submit.prevent="add">
             <div class="field">
                 <div class="control">
@@ -36,6 +47,21 @@
                 Add
             </button>
         </form>
+        <div v-if="updated != null">
+            <p class="title is-6">
+                Updated the following exercise:
+                <br> 
+                {{updated.name}}
+                <br>
+                Its new values are:
+                <br>
+                {{updated.category}}
+                <br>
+                {{updated.description}}
+                <br>
+                Suggested time: {{updated.time}} minutes.
+            </p>
+        </div>
           <div class="card" v-for="(exercise, i) in Planner.Exercises" :key="exercise.name">
               <div class="card-header-title">
                   {{exercise.name}}
@@ -46,20 +72,12 @@
                   <p class="content"><strong>Suggested time: </strong> {{exercise.time}} minutes</p>
               </div>
               <footer class="card-footer">
-                <form class="card-footer-item" @submit.prevent="edit(i)">
+                <form class="card-footer-item">
                     <div :id="'card-number-'+i" class="dropdown">
-                        <a @click.prevent="makeActive(i)" class="dropdown-trigger">Edit</a>
+                        <button @click.prevent="makeActive(i)" class="button is-warning dropdown-trigger">Edit</button>
                         <div class="dropdown-menu">
                             <div class="dropdown-content">
                                 <div class="dropdown-item">
-                                    <div class="field">
-                                        <div class="control">
-                                            <label class="label">
-                                                Name
-                                            </label>
-                                            <input type="text" placeholder="Name" v-model="editExercise.name">
-                                        </div>
-                                    </div>
                                     <div class="field">
                                         <div class="control">
                                             <label class="label">
@@ -89,14 +107,16 @@
                                         </div>
                                     </div>
                                     <div class="field">
-                                        <div class="control"><button class="button is-success">Submit</button></div>
+                                        <div class="control"><button class="button is-success" @click.prevent="edit(exercise.name)">Submit</button></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </form>
-                <a href="#" @click.prevent="deleteExercise(i)" class="card-footer-item">Delete</a>
+                <div class="card-footer-item">
+                    <button @click.prevent="deleteExercise(exercise.name)" class="button is-danger">Delete</button>
+                </div>
               </footer>
           </div>
     </div>
@@ -107,20 +127,34 @@
 import Planner from "../models/Planner";
 
 export default {
+    created(){
+        Planner.start();
+    },
     data: () => ({
-        Exercises: Planner.Exercises,
         name: '',
         description: '',
         category: '',
         time: 0,
+        Planner,
         editExercise: {name: '', description: '', category: '', time: 0},
+        added: null,
+        updated: null
     }),
     methods: {
-        add() {
-            Exercises.push({name: this.name, description: this.description, category: this.category, time: this.time});
+        async add() {
+            const added = await Planner.createExercise(this.name, this.description, this.category, this.time);
+            if(!added){
+                console.error("Problem adding exercise");
+            }
+            this.added = added;
         },
-        deleteExercise(index){
-            Exercises.splice(index, 1);
+        async deleteExercise(name){
+            try{
+                await Planner.deleteExercise(name);
+            } catch(error){
+                console.error(error);
+            }
+            
         },
         makeActive(id) {
             const exerciseCard = document.getElementById('card-number-'+id);
@@ -131,18 +165,17 @@ export default {
                 exerciseCard.classList.add("is-active");
             }
         },
-        edit(id) {
-            if(this.editExercise.name != ''){
-                Exercises[id].name = this.editExercise.name;
-            }
-            if(this.editExercise.description != ''){
-                Exercises[id].description = this.editExercise.description;
-            }
-            if(this.editExercise.category != ''){
-                Exercises[id].category = this.editExercise.category;
-            }
-            if(this.editExercise.time != 0){
-                Exercises[id].time = this.editExercise.time;
+        async edit(name) {
+            try{
+                const response = await Planner.editExercise(name, 
+                {
+                    description: this.editExercise.description, 
+                    category: this.editExercise.category,
+                    time: this.editExercise.time
+                });
+                this.updated = response;
+            } catch(error){
+                console.error(error.message);
             }
         }
     }

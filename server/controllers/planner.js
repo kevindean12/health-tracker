@@ -11,13 +11,13 @@ router
         let playlist = [];
         let workouts = [];
         if(planner.UserWorkouts.find(x => x.UserID == req.userID)){
-            workouts = JSON.parse(JSON.stringify(planner.UserWorkouts.filter(x => x.UserID == req.userID)));
+            workouts = planner.UserWorkouts.filter(x => x.UserID == req.userID);
         }
         if(planner.UserPlaylists.find(x => x.UserID == req.userID)){
-            playlist = JSON.parse(JSON.stringify(planner.UserPlaylists.find(x => x.UserID == req.userID))).Playlist;
+            playlist = planner.UserPlaylists.find(x => x.UserID == req.userID).Playlist;
         }
         res.send({
-            Exercises: JSON.parse(JSON.stringify(exercises.exerciseList)),
+            Exercises: exercises.exerciseList,
             UserPlaylist: playlist,
             Workouts: workouts
         });
