@@ -41,4 +41,23 @@ function AdminLogin(email, password){
     return CurrentUser = user;
 }
 
-module.exports = {Login, GetUser, Register, AdminLogin, FindFriend}
+function ChangeName(userID, name){
+    const user = Users.find(x => x.UserID == userID);
+    if(user){
+        user.Name = name;
+        return user.Name;
+    }
+    else {
+        throw Error("User not found");
+    }
+}
+
+function ChangePassword(userID, password){
+    const user = Users.find(x => x.UserID == userID);
+    if(user){
+        user.Password = password;
+    }
+    else throw Error("User not found");
+}
+
+module.exports = {Login, GetUser, Register, AdminLogin, FindFriend, ChangeName, ChangePassword}

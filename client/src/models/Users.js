@@ -24,3 +24,13 @@ export function Logout(){
     this.$router.push('/login');
     return CurrentUser = null;
 }
+
+export async function ChangeName(name){
+    const response = await sjFetch('/users/changeName', {name: name});
+    return response.updated;
+}
+
+export async function ChangePassword(password){
+    const response = await sjFetch('/users/changePassword', {password: password});
+    return response.updated;
+}

@@ -21,5 +21,21 @@ router
             res.status(400).send({message: error.message});
         }
     })
+    .post('/changeName', (req, res) => {
+        try {
+            const name = users.ChangeName(req.userID, req.body.name);
+            res.send({updated: name});
+        } catch(error){
+            res.status(401).send({message: error.message});
+        }
+    })
+    .post('/changePassword', (req, res) => {
+        try {
+            users.ChangePassword(req.userID, req.body.password);
+            res.send({updated: true});
+        } catch(error){
+            res.status(401).send({message: error.message});
+        }
+    })
 
 module.exports = router;

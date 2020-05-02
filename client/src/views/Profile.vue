@@ -36,7 +36,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-header-title">
-                             Edit your profile
+                            <a @click="editProfile" class="navbar-item" href="#">Edit your profile</a> 
                         </div>
                     </div>
                     <div class="card-content">
@@ -47,16 +47,73 @@
                 </div>
             </div>
         </div>
+        <div v-if="edit == true">
+            <div v-if="newName != ''">
+                <p class="content">Username updated to: {{newName}}</p>
+            </div>
+            <form>
+                <div class="field">
+                    <label class="label">Change Password</label>
+                    <p class="control has-icons-left">
+                    <input class="input" type="password" placeholder="Password" v-model="password">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    </p>
+                </div>
+                <div class="field">
+                    <label class="label">Change Name</label>
+                    <p class="control has-icons-left has-icons-right">
+                        <input class="input" type="text" placeholder="Name" v-model="name">
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-user"></i>
+                        </span>
+                        <span class="icon is-small is-right">
+                            <i class="fas fa-check"></i>
+                        </span>
+                    </p>
+                </div>
+                <div class="field">
+                    <p class="control">
+                        <button @click.prevent="submitChanges" class="button is-success">
+                            Submit changes
+                        </button>
+                    </p>
+                </div>
+            </form>
+        </div>
+        
     </div>
 </template>
 
 <script>
-import { CurrentUser } from "../models/Users";
+import { CurrentUser, ChangeName, ChangePassword } from "../models/Users";
 
 export default {
     data: () => ({
         CurrentUser,
-    })
+        edit: false,
+        name: '',
+        password: '',
+        newName: ''
+    }),
+    methods: {
+        editProfile(){
+            this.edit = true;
+        },
+        async submitChanges(){
+            if(this.name != ''){
+                const newName = await ChangeName(this.name);
+                this.newName = newName;
+            }
+            if(this.password != ''){
+                const success = await ChangePassword(this.password);
+                if(success){
+                    this.$router.push('/login');
+                }
+            }
+        }
+    }
 }
 </script>
 
