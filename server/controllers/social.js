@@ -6,38 +6,39 @@ const users = require('../models/Users');
 const router = express.Router();
 
 router
-    .get('/', (req, res) => {
-        const friendRequests = social.getFriendRequests(req.userID);
-        const sharedObjects = social.getShared(req.userID);
-        const friends = social.getAllFriends(req.userID);
+    .get('/', async (req, res) => {
+        const friendRequests = await social.getFriendRequests(req.userID);
+        const sharedObjects = await social.getShared(req.userID);
+        const friends = await social.getAllFriends(req.userID);
         console.log("shared objects: ", sharedObjects);
+        console.log("friends: ", friends);
         res.send({
             requests: friendRequests.requests,
             shared: sharedObjects,
             friends: friends
         });
     })
-    .post('/find', (req, res) => {
-        const results = users.FindFriend(req.body.email);
-        res.send({name: results.Name, email: results.Email, userID: results.UserID});
+    .post('/find', async (req, res) => {
+        const results = await users.FindFriend(req.body.email);
+        res.send({Name: results.Name, Email: results.Email, UserID: results.UserID});
     })
-    .post('/approveFriend', (req, res) => {
-        const results = social.approveFriend(req.userID, req.body.friendID);
-        const newFriend = social.getFriend(req.userID, req.body.friendID);
+    .post('/approveFriend', async (req, res) => {
+        const results = await social.approveFriend(req.userID, req.body.friendID);
+        const newFriend = await users.GetUser(req.body.friendID);
         res.send({
             requests: results.requests,
-            newFriend: newFriend.friend
+            newFriend: newFriend
         });
     })
-    .post('/requestFriend', (req, res) =>{
-        const results = social.requestFriend(req.userID, req.body.friendID);
-        const requestedFriend = users.GetUser(req.body.friendID);
+    .post('/requestFriend', async (req, res) => {
+        const requests = await social.requestFriend(req.userID, req.body.friendID);
+        const requestedFriend = await users.GetUser(req.body.friendID);
         res.send({
-            requests: results.requests,
+            requests: requests.requests,
             requestedFriend: requestedFriend
         });
     })
-    .post('/share', (req, res) => {
+    .post('/share', async (req, res) => {
         const good = social.shareItem(req.userID, req.body.type, req.body.ID);
         if(good){
             res.status(200).send({message: "ok"});

@@ -23,10 +23,11 @@ export default {
     },
     async start(){
         const response = await sjFetch('/plan');
-        this.Exercises = JSON.parse(JSON.stringify(response.Exercises));
-        this.UserPlaylist = JSON.parse(JSON.stringify(response.UserPlaylist));
-        this.WorkoutSchedule = JSON.parse(JSON.stringify(response.Workouts));
-        console.log(this.Exercises, this.UserPlaylist, this.WorkoutSchedule);
+        this.Exercises = response.Exercises;
+        this.UserPlaylist = response.UserPlaylist;
+        this.WorkoutSchedule = response.Workouts;
+        this.CurrentGoals = response.Goals
+        console.log(this.Exercises, this.UserPlaylist, this.WorkoutSchedule, this.CurrentGoals);
     },
     WorkoutSchedule: [],
     async addNewWorkout(workoutSchedule){

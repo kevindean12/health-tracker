@@ -22,7 +22,7 @@
         <div class="title is-3 has-text-centered">My Workouts</div>
         <div class="columns">
             <div class="column is-one-quarter">
-                <div v-for="(goal, i) in Planner.CurrentGoals" :key="goal.GID" class="goal">
+                <div v-for="(goal, i) in Planner.CurrentGoals" :key="goal._id" class="goal">
                     <div class="title is-4 has-text-centered">Goal #{{i+1}}</div>
                     <button @click.prevent="setCurrentGoal(goal._id)" class="button">Work on this goal</button>
                     <div>
@@ -87,7 +87,7 @@
                                         <div class="dropdown-item">
                                             Completed <input type="number" class="input" placeholder="0" v-model="completed"> minutes. 
                                         </div>
-                                        <button @click.prevent="updateExercise(workout.WID, j, currentGoal)" class="button">
+                                        <button @click.prevent="updateExercise(workout._id, j, currentGoal)" class="button">
                                             Submit
                                         </button>
                                     </div>
@@ -97,7 +97,7 @@
                     </div>
                     <div id="workout-btn">
                         {{error}}
-                        <button @click="shareWorkout(workout.WID)" class="button is-large is-link">
+                        <button @click="shareWorkout(workout._id)" class="button is-large is-link">
                             Share Workout!
                         </button>
                     </div>

@@ -13,7 +13,8 @@ router
         res.send({
             Exercises: exerciseList,
             UserPlaylist: user.Playlist,
-            Workouts: user.Workouts
+            Workouts: user.Workouts,
+            Goals: user.Goal
         });
     })
     .post('/submitWorkout', async (req, res) => {

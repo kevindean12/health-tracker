@@ -1,3 +1,4 @@
+const User = require('./Users').User;
 const users = require('./Users');
 const planner = require('./Plan');
 
@@ -8,29 +9,27 @@ const UserFriends = [];
 const FriendRequests = [];
 let requestID = 1;
 
-function shareItem(userID, itemType, itemID){
-    const friends = UserFriends.find(x => x.UserID == userID);
-    if(!friends){
-        return true;
-    }
+async function shareItem(userID, itemType, itemID){
+    const user = await User.findOne({UserID: userID});
+    const friends = user.Friends;
     if(itemType == "Goal"){
-        const goal = planner.UserGoals.find(x => x.UserID == userID);
-        for(let i = 0; i < friends.Friends.length; i++){
-            const friend = friends.Friends[i];
-            if(!goal.Shared.includes(friend)){
-                goal.Shared.push(friend);
+        const goal = user.Goal.find(x => x._id == itemID);
+        for(let i = 0; i < friends.length; i++){
+            if(!goal.Shared.includes(friends[i])){
+                goal.Shared.push(friends[i]);
             }
         }
+        await user.save();
         return true;
     }
     else if(itemType == "Workout"){
-        const workout = planner.UserWorkouts.find(x => x.WID == itemID);
-        for(let i = 0; i < friends.Friends.length; i++){
-            const friend = friends.Friends[i];
-            if(!workout.Shared.includes(friend)){
-                workout.Shared.push(friend);
+        const workout = user.Workouts.find(x => x._id == itemID);
+        for(let i = 0; i < friends.length; i++){
+            if(!workout.Shared.includes(friends[i])){
+                workout.Shared.push(friends[i]);
             }
         }
+        await user.save();
         return true;
     }
     else{
@@ -38,108 +37,88 @@ function shareItem(userID, itemType, itemID){
     }
 }
 
-function getShared(userID){
-    const goals = planner.UserGoals.filter(x => x.Shared.includes(userID));
-    for(let i = 0; i < goals.length; i++){
-        goals[i].userName = users.GetUser(goals[i].UserID).Name;
+async function getShared(userID){
+    const hasGoalsShared = await User.find({"Goal.Shared": userID}).select("Name Goal");
+    const hasWorkoutsShared = await User.find({"Workouts.Shared": userID}).select("Name Workouts");
+    const goals = [];
+    const workouts = [];
+    for(let i = 0; i < hasGoalsShared.length; i++){
+        const allgoals = hasGoalsShared[i].Goal.filter(x => x.Shared.includes(userID));
+        const name = hasGoalsShared[i].Name;
+        for(let j = 0; j < allgoals.length; j++){
+            const goal = allgoals[j]._doc;
+            goal.userName = name;
+            goals.push(goal);
+        }
     }
-    const workouts = planner.UserWorkouts.filter(x => x.Shared.includes(userID));
-    for(let i = 0; i < workouts.length; i++){
-        workouts[i].userName = users.GetUser(workouts[i].UserID).Name;
+    for(let i = 0; i < hasWorkoutsShared.length; i++){
+        const allworkouts = hasWorkoutsShared[i].Workouts.filter(x => x.Shared.includes(userID));
+        const name = hasWorkoutsShared[i].Name;
+        for(let j = 0; j < allworkouts.length; j++){
+            const workout = allworkouts[j]._doc;
+            workout.userName = name;
+            workouts.push(workout);
+        }
     }
+    console.log("filtered goals: ", goals);
+    console.log("filtered workouts: ", workouts);
     return {
         goals: goals,
         workouts: workouts
     };
 }
 
-function getFriendRequests(userID){
-    const results = FriendRequests.find(x => x.UserID == userID);
+async function getFriendRequests(userID){
+    const results = await User.findOne({UserID: userID}, "FriendRequests");
     const requesters = [];
-    if(results){
-        for(let i = 0; i < results.Requests.length; i++){
-            const user = users.GetUser(results.Requests[i].userID);
-            requesters.push({name: user.Name, email: user.Email, userID: user.UserID, ID: results.Requests[i].ID});
-        }
+    for(let i = 0; i < results.FriendRequests.length; i++){
+        const requester = await users.GetUser(results.FriendRequests[i]);
+        requesters.push({Name: requester.Name, Email: requester.Email, UserID: requester.UserID});
     }
+    
     return {requests: requesters};
 }
 
-function getFriend(userID, friendID){
-    const user = UserFriends.find(x => x.UserID == userID);
-    const friend = user.Friends.find(x => x == friendID);
-    if(friend){ //all friends have a nonzero positive userID: only admin has UserID 0
-        return {friend: users.GetUser(friendID)};
+async function requestFriend(userID, friendID){
+    const user = await User.findOne({UserID: friendID});
+    if(!user.FriendRequests.includes(userID)){
+        user.FriendRequests.push(userID);
     }
-    else{
-        throw Error("Friend not found");
+    else throw Error("You have already requested that person as a friend!");
+    await user.save();
+    return await getFriendRequests(userID);
+}
+
+async function approveFriend(userID, friendID){
+    await addFriend(userID, friendID);
+    await addFriend(friendID, userID);
+    return await getFriendRequests(userID);
+}
+
+async function addFriend(userID, friendID){
+    const user = await User.findOne({UserID: userID});
+    if(!user.Friends.includes(friendID)){
+        user.Friends.push(friendID);
+    }
+    if(user.FriendRequests.includes(friendID)){
+        const index = user.FriendRequests.find(x => x == friendID);
+        user.FriendRequests.splice(index, 1);
+    }
+    await user.save();
+}
+
+async function getAllFriends(userID){
+    const friendIDs = await User.findOne({UserID: userID}, "Friends");
+    console.log("list of friends in getallfriends ", friendIDs);
+    const friends = [];
+    for(let i = 0; i < friendIDs.Friends.length; i++){
+        const friend = await users.GetUser(friendIDs.Friends[i]);
+        friends.push(friend);
     }
     
-}
-
-function requestFriend(userID, friendID){
-    const user = FriendRequests.find(x => x.UserID == friendID);
-    if(user){
-        if(!user.Requests.find(x => x.userID == userID)){
-            user.Requests.push({userID: userID, ID: requestID++});
-        }
-    }
-    else{
-        FriendRequests.push({
-            UserID: friendID,
-            Requests: [{userID: userID, ID: requestID++}]
-        });
-    }
-    console.log(FriendRequests);
-    return getFriendRequests(userID);
-}
-
-function approveFriend(userID, friendID){
-    addFriend(userID, friendID);
-    addFriend(friendID, userID);
-    completeFriendRequest(userID, friendID);
-    completeFriendRequest(friendID, userID);
-    console.log(UserFriends);
-    console.log(FriendRequests);
-    return getFriendRequests(userID);
-}
-
-function addFriend(userID, friendID){
-    const results = UserFriends.find(x => x.UserID == userID);
-    if(results){
-        if(!results.Friends.some(x => x == friendID)){
-            results.Friends.push(friendID);
-        }
-        
-    }
-    else{
-        UserFriends.push({
-            UserID: userID,
-            Friends: [friendID]
-        });
-    }
-}
-
-function completeFriendRequest(userID, friendID){
-    const userFR = FriendRequests.find(x => x.UserID == userID);
-    if(userFR){
-        const fRequest = userFR.Requests.find(x => x.userID == friendID);
-        const index = userFR.Requests.indexOf(fRequest);
-        userFR.Requests.splice(index, 1);
-    }
-}
-
-function getAllFriends(userID){
-    const user = UserFriends.find(x => x.UserID == userID);
-    const friends = [];
-    if(user){
-        for(let i = 0; i < user.Friends.length; i++){
-            friends.push({...users.GetUser(user.Friends[i])})
-        }
-    }
     return friends;
 }
 
 module.exports = {
-    getFriendRequests, approveFriend, getFriend, requestFriend, getShared, getAllFriends, shareItem
+    getFriendRequests, approveFriend, requestFriend, getShared, getAllFriends, shareItem
 }

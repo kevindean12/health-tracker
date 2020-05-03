@@ -98,7 +98,7 @@ async function GetUser(userID){
 
 async function FindFriend(email){
     const friend = await User.findOne({Email: email});
-    return {Name: user.Name, Email: user.Email, UserID: user.UserID};
+    return {Name: friend.Name, Email: friend.Email, UserID: friend.UserID};
 }
 
 
