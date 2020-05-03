@@ -1,4 +1,4 @@
-const users = require('./Users');
+const User = require('./Users').User;
 const unirest = require('unirest');
 const token = require('../models/listenapi').token;
 
@@ -23,15 +23,20 @@ let goalID = 1;
 //each exercise is number of minutes completed
 const UserCompleted = [];
 
-function SubmitWorkout(userID, workout) {
-    UserWorkouts.push({
-        UserID: userID,
+async function SubmitWorkout(userID, workout) {
+    const user = await User.findOne({UserID: userID});
+    user.Workouts.push({
         Exercises: workout.Exercises,
         Podcasts: workout.Podcasts,
-        Shared: [],
-        WID: workoutID++
-    });
-    console.log("workouts: ", UserWorkouts);
+    })
+    // UserWorkouts.push({
+    //     UserID: userID,
+    //     Exercises: workout.Exercises,
+    //     Podcasts: workout.Podcasts,
+    //     Shared: [],
+    //     WID: workoutID++
+    // });
+    return await user.save();
 }
 
 function addToPlaylist(userID, pod){
@@ -81,6 +86,10 @@ function createGoal(userID, cardio, strength, days){
     }
 }
 
+async function getFullUser(userID){
+    return await User.findOne({UserID: userID});
+}
+
 function exerciseProgress(userID, iWorkout, jExercise, completed){
     const exercise = UserWorkouts.find(x => x.WID == iWorkout).Exercises[jExercise];
     exercise.time -= completed;
@@ -125,5 +134,5 @@ function exerciseProgress(userID, iWorkout, jExercise, completed){
 module.exports = {
     UserWorkouts: UserWorkouts, SubmitWorkout, searchPodcasts,
     createGoal, UserPlaylists: UserPlaylists, addToPlaylist, exerciseProgress,
-    UserGoals: UserGoals, UserCompleted: UserCompleted
+    UserGoals: UserGoals, UserCompleted: UserCompleted, getFullUser
 };

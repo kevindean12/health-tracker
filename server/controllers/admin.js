@@ -17,22 +17,32 @@ router
             res.status(401).send({message: error.message});
         }
     })
-    .post('/addExercise', (req, res) => {
-        const added = exercises.addExercise(req.body.newExercise);
-        res.send({added: added});
+    .post('/addExercise', async (req, res) => {
+        const added = await exercises.addExercise(req.body.newExercise);
+        res.send({added: {
+            name: added.name,
+            description: added.description,
+            category: added.category,
+            time: added.time
+        }});
     })
-    .post('/deleteExercise', (req, res) => {
+    .post('/deleteExercise', async (req, res) => {
         try{
-            exercises.deleteExercise(req.body.name);
+            await exercises.deleteExercise(req.body.name);
             res.send({message: "ok"});
         }catch(error){
             res.status(401).send({message: error.message});
         }
     })
-    .post('/editExercise', (req, res) => {
+    .post('/editExercise', async (req, res) => {
         try{
-            const response = exercises.editExercise(req.body.name, req.body.updated);
-            res.send({updated: response});
+            const response = await exercises.editExercise(req.body.name, req.body.updated);
+            res.send({updated: {
+                name: response.name,
+                description: response.description,
+                category: response.category,
+                time: response.time
+            }});
         }catch(error){
             res.status(401).send({message: error.message});
         }

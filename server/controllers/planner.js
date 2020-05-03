@@ -6,25 +6,20 @@ const planner = require('../models/Plan');
 const router = express.Router();
 
 router
-    .get('/', (req, res) => {
+    .get('/', async (req, res) => {
         console.log({userID: req.userID});
-        let playlist = [];
-        let workouts = [];
-        if(planner.UserWorkouts.find(x => x.UserID == req.userID)){
-            workouts = planner.UserWorkouts.filter(x => x.UserID == req.userID);
-        }
-        if(planner.UserPlaylists.find(x => x.UserID == req.userID)){
-            playlist = planner.UserPlaylists.find(x => x.UserID == req.userID).Playlist;
-        }
+        const user = await planner.getFullUser(req.userID);
+        const exerciseList = await exercises.getAllExercises();
         res.send({
-            Exercises: exercises.exerciseList,
-            UserPlaylist: playlist,
-            Workouts: workouts
+            Exercises: exerciseList,
+            UserPlaylist: user.Playlist,
+            Workouts: user.Workouts
         });
     })
-    .post('/submitWorkout', (req, res) => {
-        planner.SubmitWorkout(req.userID, req.body.workout);
-        res.send(JSON.parse(JSON.stringify(planner.UserWorkouts.filter(x => x.UserID == req.userID))));
+    .post('/submitWorkout', async (req, res) => {
+        const user = await planner.SubmitWorkout(req.userID, req.body.workout);
+        console.log("user workouts after adding: ", user.Workouts);
+        res.send(user.Workouts);
     })
     .post('/podsearch', async (req, res) => {
         const results = await planner.searchPodcasts(req.body.keywords, req.body.page);

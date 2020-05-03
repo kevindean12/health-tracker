@@ -1,5 +1,57 @@
 const mongoose = require('mongoose');
 
+const ExerciseSchema = new mongoose.Schema({
+    name: {type: String},
+    category: {type: String},
+    description: {type: String},
+    time: {type: Number}
+});
+
+const Exercise = mongoose.model("Exercise", ExerciseSchema);
+
+const PodcastSchema = new mongoose.Schema({
+    title: {
+        type: String
+    },
+    episodeTitle: {
+        type: String
+    },
+    duration: {
+        type: Number
+    },
+    audio: {
+        type: String
+    },
+    coverArt: {
+        type: String
+    }
+});
+
+const WorkoutSchema = new mongoose.Schema({
+    WID: {
+        type: mongoose.Schema.Types.ObjectId,
+    },
+    Exercises: [ExerciseSchema],
+    Podcasts: [PodcastSchema],
+    Shared: [{type: Number}]
+});
+
+const GoalSchema = new mongoose.Schema({
+    GID: {
+        type: mongoose.Schema.Types.ObjectId
+    },
+    Cardio: {
+        type: Number
+    },
+    Strength: {
+        type: Number
+    },
+    Days: {
+        type: Number
+    },
+    Shared: [{type: Number}]
+});
+
 const UserSchema = new mongoose.Schema({
     Name: {
         type: String,
@@ -16,7 +68,15 @@ const UserSchema = new mongoose.Schema({
     UserID: {
         type: Number,
         required: true
-    }
+    },
+    Workouts: [WorkoutSchema],
+    Playlist: [PodcastSchema],
+    Goal: GoalSchema,
+    Completed: {
+        Goals: {type: Number}
+    },
+    FriendRequests: [{type: Number}],
+    Friends: [{type: Number}]
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -87,4 +147,4 @@ async function ChangePassword(userID, password){
     else throw Error("User not found");
 }
 
-module.exports = {Login, GetUser, Register, AdminLogin, FindFriend, ChangeName, ChangePassword}
+module.exports = {Login, GetUser, Register, AdminLogin, FindFriend, ChangeName, ChangePassword, User, Exercise}
