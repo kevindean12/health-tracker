@@ -24,12 +24,13 @@
             <div class="column is-one-quarter">
                 <div v-for="(goal, i) in Planner.CurrentGoals" :key="goal.GID" class="goal">
                     <div class="title is-4 has-text-centered">Goal #{{i+1}}</div>
+                    <button @click.prevent="setCurrentGoal(goal._id)" class="button">Work on this goal</button>
                     <div>
                         <span class="icon fa-lg">
                             <i class="fas fa-dumbbell"></i> 
                         </span>
                         <div class="title is-5 is-inline">
-                            {{goal.Strength}} mins strength
+                            {{goal.Strength.Amount}} mins strength
                         </div>
                     </div>
                     <div>
@@ -37,11 +38,11 @@
                             <i class="fas fa-running"></i> 
                         </span>
                         <div class="title is-5 is-inline">
-                            {{goal.Cardio}} mins cardio
+                            {{goal.Cardio.Amount}} mins cardio
                         </div>
                     </div>
                     {{error}}
-                    <button @click="shareGoal(goal.GID)" class="button is-large is-link">
+                    <button @click="shareGoal(goal._id)" class="button is-large is-link">
                         Share Goal!
                     </button>
                 </div>
@@ -86,7 +87,7 @@
                                         <div class="dropdown-item">
                                             Completed <input type="number" class="input" placeholder="0" v-model="completed"> minutes. 
                                         </div>
-                                        <button @click.prevent="updateExercise(workout.WID, j)" class="button">
+                                        <button @click.prevent="updateExercise(workout.WID, j, currentGoal)" class="button">
                                             Submit
                                         </button>
                                     </div>
@@ -118,6 +119,7 @@ export default {
         trackTimePlay: 0,
         trackTimeStop: 0,
         currentAudio: "",
+        currentGoal: "",
         congrats: "",
         error: ""
     }),
@@ -146,7 +148,7 @@ export default {
             }
         },
         async shareGoal(GID){
-            const response = await Planner.share({type: "Goal", ID: Planner.CurrentGoal.GID});
+            const response = await Planner.share({type: "Goal", ID: GID});
             if(response != "ok"){
                 this.error = response;
             }
@@ -157,8 +159,8 @@ export default {
                 this.error = response;
             }
         },
-        async updateExercise(workoutID, jExercise){
-            const progress = await Planner.updateExerciseProgress(workoutID, jExercise, this.completed);
+        async updateExercise(workoutID, jExercise, whichGoal){
+            const progress = await Planner.updateExerciseProgress(whichGoal, workoutID, jExercise, this.completed);
             console.log("Progress object",progress);
             this.completed = 0;
             let congrats = "";
@@ -176,6 +178,9 @@ export default {
         updateTrack(index){
             this.currentAudio = this.availablePodcasts[index].audio;
         },
+        setCurrentGoal(GID){
+            this.currentGoal = GID;
+        }
     }
 }
 </script>

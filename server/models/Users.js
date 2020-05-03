@@ -34,23 +34,25 @@ const WorkoutSchema = new mongoose.Schema({
     Exercises: [ExerciseSchema],
     Podcasts: [PodcastSchema],
     Shared: [{type: Number}]
-});
+}, {timestamps: true});
 
 const GoalSchema = new mongoose.Schema({
     GID: {
         type: mongoose.Schema.Types.ObjectId
     },
     Cardio: {
-        type: Number
+        Amount: {type: Number},
+        Remaining: {type: Number}
     },
     Strength: {
-        type: Number
+        Amount: {type: Number},
+        Remaining: {type: Number}
     },
     Days: {
         type: Number
     },
     Shared: [{type: Number}]
-});
+}, {timestamps: true});
 
 const UserSchema = new mongoose.Schema({
     Name: {
@@ -73,7 +75,8 @@ const UserSchema = new mongoose.Schema({
     Playlist: [PodcastSchema],
     Goal: [GoalSchema],
     Completed: {
-        Goals: {type: Number}
+        Goals: [GoalSchema],
+        Exercises: [ExerciseSchema]
     },
     FriendRequests: [{type: Number}],
     Friends: [{type: Number}]

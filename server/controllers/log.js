@@ -5,12 +5,12 @@ const planner = require('../models/Plan');
 const router = express.Router();
 
 router
-    .get('/exercises', (req, res) => res.send(plan.MyWorkouts))
-    .post('/updateExercise', (req, res) => {
-        const response = planner.exerciseProgress(req.userID, req.body.workoutIndex, req.body.exerciseIndex, req.body.minutesCompleted);
+    .post('/updateExercise', async (req, res) => {
+        const response = await planner.exerciseProgress(req.userID, req.body.GID, req.body.workoutID, req.body.exerciseIndex, req.body.minutesCompleted);
+        const user = await planner.getFullUser(req.userID);
         res.send({
-            workouts: JSON.parse(JSON.stringify(planner.UserWorkouts.filter(x => x.UserID == req.userID))),
-            progress: JSON.parse(JSON.stringify(response))
+            workouts: user.Workouts,
+            progress: response
         });
     })
 

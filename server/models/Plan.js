@@ -69,8 +69,8 @@ async function searchPodcasts(keywords, page){
 async function createGoal(userID, cardio, strength, days){
     const user = await User.findOne({UserID: userID});
     user.Goal.push({
-        Cardio: cardio*days,
-        Strength: strength*days,
+        Cardio: {Amount: cardio*days, Remaining: cardio*days},
+        Strength: {Amount: strength*days, Remaining: strength*days},
         Days: days
     });
     return await user.save();
@@ -80,40 +80,34 @@ async function getFullUser(userID){
     return await User.findOne({UserID: userID});
 }
 
-function exerciseProgress(userID, iWorkout, jExercise, completed){
-    const exercise = UserWorkouts.find(x => x.WID == iWorkout).Exercises[jExercise];
+async function exerciseProgress(userID, GID, iWorkout, jExercise, completed){
+    const user = await User.findOne({UserID: userID});
+    const workout = user.Workouts.find(x => x._id.str == iWorkout);
+    const exercise = workout.Exercises[jExercise];
     exercise.time -= completed;
-    
-    const progress = UserCompleted.find(x => x.UserID == userID);
-    if(progress){
-        progress[exercise.name] += completed;
+
+    const goal = user.Goal.find(x => x._id == GID);
+    goal[exercise.category].Remaining -= completed;
+
+    const finishedGoal = (goal.Cardio.Remaining <= 0 && goal.Strength.Remaining <= 0);
+    if(finishedGoal){
+        const index = user.Goal.indexOf(goal);
+        user.Completed.Goals.push(goal);
+        user.Goal.splice(index, 1);
     }
     
-
-    const goal = UserGoals.find(x => x.UserID == userID);
-    let finishedGoal = false;
-    if(goal){
-        goal[exercise.category] -= completed;
-        finishedGoal = (goal.Cardio <= 0 && goal.Strength <= 0);
-        if(finishedGoal){
-            progress.Goals++;
-        }
-    }
-    
-
     const finishedExercise = (exercise.time <= 0);
     if(finishedExercise){
-        const workout = UserWorkouts.find(x => x.WID == iWorkout);
+        user.Completed.Exercises.push(exercise);
         workout.Exercises.splice(jExercise, 1);
     }
 
-    const finishedWorkout = (UserWorkouts.find(x => x.WID == iWorkout).Exercises.length == 0);
+    const finishedWorkout = (workout.Exercises.length == 0);
     if(finishedWorkout){
-        const emptyWorkout = UserWorkouts.find(x => x.WID == iWorkout);
-        const index = UserWorkouts.indexOf(emptyWorkout);
-        UserWorkouts.splice(index, 1);
+        const wIndex = user.Workouts.indexOf(workout);
+        user.Workouts.splice(wIndex, 1);
     }
-
+    await user.save();
     return {
         Exercise: finishedExercise,
         Workout: finishedWorkout,

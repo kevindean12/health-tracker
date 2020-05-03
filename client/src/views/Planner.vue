@@ -42,10 +42,10 @@
           </div>
           <div class="column">
             <p><strong>Your Goals:</strong></p>
-            <div v-for="(goal, i) in Planner.CurrentGoals" :key="goal.GID">
+            <div v-for="(goal, i) in Planner.CurrentGoals" :key="goal._id">
               <p><strong> Goal #{{i+1}} </strong> </p>
-              <p> {{goal.Cardio}} minutes of Cardio </p>
-              <p> {{goal.Strength}} minutes of Strength </p>
+              <p> {{goal.Cardio.Amount}} minutes of Cardio </p>
+              <p> {{goal.Strength.Amount}} minutes of Strength </p>
               <p> over {{goal.Days}} days </p>
             </div>
           </div>
