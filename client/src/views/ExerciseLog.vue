@@ -22,27 +22,29 @@
         <div class="title is-3 has-text-centered">My Workouts</div>
         <div class="columns">
             <div class="column is-one-quarter">
-                <div class="title is-3 has-text-centered">Goal</div>
-                <div class="goal">
-                    <span class="icon fa-lg">
-                        <i class="fas fa-dumbbell"></i> 
-                    </span>
-                    <div class="title is-5 is-inline">
-                        {{Planner.CurrentGoal.Strength}} mins strength
+                <div v-for="(goal, i) in Planner.CurrentGoals" :key="goal.GID" class="goal">
+                    <div class="title is-4 has-text-centered">Goal #{{i+1}}</div>
+                    <div>
+                        <span class="icon fa-lg">
+                            <i class="fas fa-dumbbell"></i> 
+                        </span>
+                        <div class="title is-5 is-inline">
+                            {{goal.Strength}} mins strength
+                        </div>
                     </div>
-                </div>
-                <div class="goal">
-                    <span class="icon fa-lg">
-                        <i class="fas fa-running"></i> 
-                    </span>
-                    <div class="title is-5 is-inline">
-                        {{Planner.CurrentGoal.Cardio}} mins cardio
+                    <div>
+                        <span class="icon fa-lg">
+                            <i class="fas fa-running"></i> 
+                        </span>
+                        <div class="title is-5 is-inline">
+                            {{goal.Cardio}} mins cardio
+                        </div>
                     </div>
+                    {{error}}
+                    <button @click="shareGoal(goal.GID)" class="button is-large is-link">
+                        Share Goal!
+                    </button>
                 </div>
-                {{error}}
-                <button @click="shareGoal" class="button is-large is-link">
-                    Share Goal!
-                </button>
             </div>
             <div class="column is-three-quarters">
                 <div class="card" v-for="(workout, i) in Planner.WorkoutSchedule" :key="i">
@@ -143,7 +145,7 @@ export default {
                 exerciseCard.classList.add("is-active");
             }
         },
-        async shareGoal(){
+        async shareGoal(GID){
             const response = await Planner.share({type: "Goal", ID: Planner.CurrentGoal.GID});
             if(response != "ok"){
                 this.error = response;

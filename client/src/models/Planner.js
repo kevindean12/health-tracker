@@ -3,7 +3,7 @@ import sjFetch from "./sjFetch";
 export default {
     Exercises: [],
     UserPlaylist: [],
-    CurrentGoal: {},
+    CurrentGoals: [],
     async share(itemInfo){
         const response = await sjFetch('/social/share', {type: itemInfo.type, ID: itemInfo.ID});
         return response.message;
@@ -14,11 +14,7 @@ export default {
             strengthMinutes: strength,
             days: days
         });
-        this.CurrentGoal = {
-            Cardio: response.Cardio,
-            Strength: response.Strength,
-            Days: response.Days
-        };
+        this.CurrentGoals = response.goals;
     },
     async searchPodcasts(keywords, page){
         //TODO sanitize inputs

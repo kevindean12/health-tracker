@@ -71,7 +71,7 @@ const UserSchema = new mongoose.Schema({
     },
     Workouts: [WorkoutSchema],
     Playlist: [PodcastSchema],
-    Goal: GoalSchema,
+    Goal: [GoalSchema],
     Completed: {
         Goals: {type: Number}
     },

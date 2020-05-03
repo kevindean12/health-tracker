@@ -41,10 +41,13 @@
             </form>
           </div>
           <div class="column">
-            <p><strong>Your Goal for this week:</strong></p>
-            <p> {{Planner.CurrentGoal.Cardio}} minutes of Cardio </p>
-            <p> {{Planner.CurrentGoal.Strength}} minutes of Strength </p>
-            <p> over {{Planner.CurrentGoal.Days}} days </p>
+            <p><strong>Your Goals:</strong></p>
+            <div v-for="(goal, i) in Planner.CurrentGoals" :key="goal.GID">
+              <p><strong> Goal #{{i+1}} </strong> </p>
+              <p> {{goal.Cardio}} minutes of Cardio </p>
+              <p> {{goal.Strength}} minutes of Strength </p>
+              <p> over {{goal.Days}} days </p>
+            </div>
           </div>
         </div>
         

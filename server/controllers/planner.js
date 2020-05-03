@@ -25,13 +25,13 @@ router
         const results = await planner.searchPodcasts(req.body.keywords, req.body.page);
         res.send(results);
     })
-    .post('/creategoal', (req, res) => {
-        const response = planner.createGoal(req.userID, req.body.cardioMinutes, req.body.strengthMinutes, req.body.days);
-        res.send(JSON.parse(JSON.stringify(response)));
+    .post('/creategoal', async (req, res) => {
+        const user = await planner.createGoal(req.userID, req.body.cardioMinutes, req.body.strengthMinutes, req.body.days);
+        res.send({goals: user.Goal});
     })
-    .post('/submitpod', (req, res) => {
-        planner.addToPlaylist(req.userID, req.body.podcast);
-        res.send(JSON.parse(JSON.stringify(planner.UserPlaylists.find(x => x.UserID == req.userID))).Playlist);
+    .post('/submitpod', async (req, res) => {
+        const user = await planner.addToPlaylist(req.userID, req.body.podcast);
+        res.send(user.Playlist);
     })
 
 module.exports = router;
