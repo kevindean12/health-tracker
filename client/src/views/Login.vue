@@ -24,12 +24,17 @@
         </p>
       </div>
       <div class="field">
-        <p class="control">
+        <div class="control">
           <button class="button is-success">
               Login
           </button>
-          <!-- <router-link class="button is-sucess" to="/log">Login</router-link> -->
-        </p>
+        </div>
+        <br>
+        <div class="control">
+          <button class="button is-primary" @click.prevent="google_login" >
+              Login with Google
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -37,11 +42,29 @@
 
 <script>
 import {Login} from "../models/Users";
+const GOOGLE_CLIENT_ID = "461133220931-rk1tihe5p5ni2gabuq0iiua9notq1vbb.apps.googleusercontent.com";
+let auth2 = null;
 export default {
+  created(){
+    const googleScriptTag = document.createElement('script')
+        googleScriptTag.setAttribute('src', 'https://apis.google.com/js/api:client.js')
+        document.head.appendChild(googleScriptTag)
+        googleScriptTag.onload = () => {
+            // the global gapi variable is created by loading that script
+            gapi.load('auth2', () => {
+                auth2 = gapi.auth2.init({
+                    client_id: GOOGLE_CLIENT_ID,
+                    cookiepolicy: 'single_host_origin',
+                    scope: 'profile email'
+                })
+            })
+        }
+  },
   data: () => ({
     email: '',
     password: '',
-    error: ''
+    error: '',
+    profilePicture: ''
   }),
   methods: {
     async login(){
@@ -51,7 +74,25 @@ export default {
       } catch (error) {
         this.error = error;
       }
-    }
+    },
+    google_login(){
+            auth2.signIn()
+            .then(googleUser =>{
+                console.log(googleUser);
+                
+                const profile = googleUser.getBasicProfile();
+                console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+                console.log('Full Name: ' + profile.getName());
+                console.log('Given Name: ' + profile.getGivenName());
+                console.log('Family Name: ' + profile.getFamilyName());
+                console.log("Image URL: " + profile.getImageUrl());
+                console.log("Email: " + profile.getEmail());
+                this.profilePicture = profile.getImageUrl();
+                return Login("google", googleUser.getAuthResponse().access_token)
+                    .then(x => this.$router.push('/game'))
+            } )
+            .catch(error => this.error = error.error);
+        }
   }
 }
 </script>

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const axios = require('axios').default;
 
 const ExerciseSchema = new mongoose.Schema({
     name: {type: String},
@@ -61,7 +62,6 @@ const UserSchema = new mongoose.Schema({
     },
     Password: {
         type: String,
-        required: true
     },
     Email: {
         type: String,
@@ -85,9 +85,30 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.model('User', UserSchema);
 
 async function Login(email, password){
-    //const user = Users.find(x => x.Email == email);
+    if(email == "google"){
+        const response = await axios.get("https://www.googleapis.com/userinfo/v2/me", { headers: { Authorization: `Bearer ${password}` } });
+        return RegisterOrLogin(response);
+    }
     const user = await User.findOne({"Email": email, "Password": password});
     if(!user) throw Error('Invalid credentials');
+    return user;
+}
+
+async function RegisterOrLogin(response){
+    console.log(response.data);
+    let user = await User.findOne({Email: response.data.email});
+    if(!user){
+        let uid = await User.countDocuments({});
+        uid++;
+        const newUser = new User({
+            Name: response.data.name,
+            Password: null,
+            Email: response.data.email,
+            UserID: uid
+        })
+        console.log(newUser);
+        user = await newUser.save();
+    }
     return user;
 }
 
@@ -105,12 +126,8 @@ async function FindFriend(email){
 async function Register(name, email, password){
     const checkUser = await User.findOne({"Email": email});
     if(!checkUser){
-        let uid = Math.floor(Math.random()*10000 + 1);
-        let uniqueID = await User.findOne({UserID: uid});
-        while(uniqueID != null){
-            uid++;
-            uniqueID = await User.findOne({UserID: uid});
-        }
+        let uid = await User.countDocuments({});
+        uid++;
         const newUser = new User({
             Name: name,
             Email: email,
@@ -119,7 +136,7 @@ async function Register(name, email, password){
         });
         return await newUser.save();
     }
-    else throw Error("Someone is already registered with that email address!");
+    else throw Error("There is already an account with that email address. Please use Login page to login.");
     
 }
 
