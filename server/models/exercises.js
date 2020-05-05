@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 const Exercise = require('./Users').Exercise;
 
-// const exercises = [
-//     {name: "Jog", description: "A moderately paced run.", category: "Cardio", time: 15},
-//     {name: "Pushups", description: "Arm and chest workout using only body weight.", category: "Strength", time: 10}
-// ];
-
 async function addExercise(exercise){
     const newExercise = new Exercise({
         name: exercise.name,

@@ -1,13 +1,5 @@
 const User = require('./Users').User;
 const users = require('./Users');
-const planner = require('./Plan');
-
-//stores friendlists as {UserID: 0, Friends: [1, 4, 3]} where Friends is a list of friends' UserIDs
-const UserFriends = [];
-
-//stores pending friend requests as {UserID: 0, Requests: [1, 2, 3]} where Requests is a list of UserIDs who have requested to be friends
-const FriendRequests = [];
-let requestID = 1;
 
 async function shareItem(userID, itemType, itemID){
     const user = await User.findOne({UserID: userID});
