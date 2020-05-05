@@ -95,7 +95,6 @@ async function Login(email, password){
 }
 
 async function RegisterOrLogin(response){
-    console.log(response.data);
     let user = await User.findOne({Email: response.data.email});
     if(!user){
         let uid = await User.countDocuments({});
@@ -106,7 +105,6 @@ async function RegisterOrLogin(response){
             Email: response.data.email,
             UserID: uid
         })
-        console.log(newUser);
         user = await newUser.save();
     }
     return user;

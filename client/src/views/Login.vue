@@ -64,7 +64,6 @@ export default {
     email: '',
     password: '',
     error: '',
-    profilePicture: ''
   }),
   methods: {
     async login(){
@@ -78,18 +77,9 @@ export default {
     google_login(){
             auth2.signIn()
             .then(googleUser =>{
-                console.log(googleUser);
-                
                 const profile = googleUser.getBasicProfile();
-                console.log("ID: " + profile.getId()); // Don't send this directly to your server!
-                console.log('Full Name: ' + profile.getName());
-                console.log('Given Name: ' + profile.getGivenName());
-                console.log('Family Name: ' + profile.getFamilyName());
-                console.log("Image URL: " + profile.getImageUrl());
-                console.log("Email: " + profile.getEmail());
-                this.profilePicture = profile.getImageUrl();
                 return Login("google", googleUser.getAuthResponse().access_token)
-                    .then(x => this.$router.push('/game'))
+                    .then(x => this.$router.push('/profile'))
             } )
             .catch(error => this.error = error.error);
         }
