@@ -2,17 +2,22 @@ const mongoose = require('mongoose');
 const Exercise = require('./Users').Exercise;
 
 async function addExercise(exercise){
-    const newExercise = new Exercise({
-        name: exercise.name,
-        description: exercise.description,
-        category: exercise.category,
-        time: exercise.time
-    });
-    return await newExercise.save();
+    try{
+        const newExercise = new Exercise({
+            name: exercise.name,
+            description: exercise.description,
+            category: exercise.category,
+            time: exercise.time
+        });
+        return await newExercise.save();
+    } catch(error) {
+        console.error(error);
+    }
+    
 }
 
 async function deleteExercise(name){
-    await Exercise.deleteOne({name: name});
+    return await Exercise.deleteOne({name: name});
 }
 
 async function editExercise(name, updated){

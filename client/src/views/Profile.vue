@@ -10,6 +10,7 @@
                         </div>
                     </div>
                     <div class="card-content">
+                        {{error}}
                         <ul>
                             <li>Set a weekly exercise goal.</li>
                             <li>Make a playlist.</li>
@@ -95,7 +96,8 @@ export default {
         edit: false,
         name: '',
         password: '',
-        newName: ''
+        newName: '',
+        error: ''
     }),
     methods: {
         editProfile(){
@@ -103,14 +105,24 @@ export default {
         },
         async submitChanges(){
             if(this.name != ''){
-                const newName = await ChangeName(this.name);
-                this.newName = newName;
+                try{
+                    const newName = await ChangeName(this.name);
+                    this.newName = newName.updated;
+                } catch(error){
+                    this.error = error.message;
+                }
+                
             }
             if(this.password != ''){
-                const success = await ChangePassword(this.password);
-                if(success){
+                try{
+                    const success = await ChangePassword(this.password);
+                    if(success){
                     this.$router.push('/login');
                 }
+                } catch(error) {
+                    this.error = error;
+                }
+                
             }
         }
     }

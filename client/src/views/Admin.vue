@@ -1,6 +1,7 @@
 <template>
     <div class="container">
         <h1 class="title is-4">Manage Available Exercises</h1>
+        {{error}}
         <div v-if="added != null">
             <p class="title is-6">
                 Added new exercise:
@@ -138,21 +139,27 @@ export default {
         Planner,
         editExercise: {name: '', description: '', category: '', time: 0},
         added: null,
-        updated: null
+        updated: null,
+        error: ''
     }),
     methods: {
         async add() {
-            const added = await Planner.createExercise(this.name, this.description, this.category, this.time);
-            if(!added){
-                console.error("Problem adding exercise");
+            try{
+                if(!this.name || !this.description || !this.category || !this.time){
+                    throw Error("Each field needs to be filled");
+                }
+                const response = await Planner.createExercise(this.name, this.description, this.category, this.time);
+                this.added = response.added;
+            } catch(error) {
+                this.error = error.message;
             }
-            this.added = added;
+            
         },
         async deleteExercise(name){
             try{
                 await Planner.deleteExercise(name);
             } catch(error){
-                console.error(error);
+                this.error = error.message;
             }
             
         },
@@ -173,9 +180,9 @@ export default {
                     category: this.editExercise.category,
                     time: this.editExercise.time
                 });
-                this.updated = response;
+                this.updated = response.updated;
             } catch(error){
-                console.error(error.message);
+                this.error = error.message;
             }
         }
     }

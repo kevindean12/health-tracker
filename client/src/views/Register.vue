@@ -71,7 +71,7 @@ export default {
                 this.$router.push('/profile');
             }
             catch(error){
-                this.error = error;
+                this.error = error.message;
             }
         }
     }

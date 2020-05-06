@@ -27,10 +27,10 @@ export function Logout(){
 
 export async function ChangeName(name){
     const response = await sjFetch('/users/changeName', {name: name});
-    return response.updated;
+    return response;
 }
 
 export async function ChangePassword(password){
     const response = await sjFetch('/users/changePassword', {password: password});
-    return response.updated;
+    return response;
 }

@@ -18,18 +18,23 @@ router
         }
     })
     .post('/addExercise', async (req, res) => {
-        const added = await exercises.addExercise(req.body.newExercise);
-        res.send({added: {
-            name: added.name,
-            description: added.description,
-            category: added.category,
-            time: added.time
-        }});
+        try{
+            const added = await exercises.addExercise(req.body.newExercise);
+            res.send({added: {
+                name: added.name,
+                description: added.description,
+                category: added.category,
+                time: added.time
+            }});
+        } catch(error) {
+            res.status(500).send({message: "Error processing exercise."});
+        }
+        
     })
     .post('/deleteExercise', async (req, res) => {
         try{
-            await exercises.deleteExercise(req.body.name);
-            res.send({message: "ok"});
+            const response = await exercises.deleteExercise(req.body.name);
+            res.send({message: response.ok});
         }catch(error){
             res.status(401).send({message: error.message});
         }

@@ -71,7 +71,7 @@ export default {
         await Login(this.email, this.password);
         this.$router.push('/profile');
       } catch (error) {
-        this.error = error;
+        this.error = error.message;
       }
     },
     google_login(){

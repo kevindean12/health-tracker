@@ -230,95 +230,77 @@ export default {
   },
   methods: {
     createGoal(){
-      const numDays = this.daysToExercise;
-      if(numDays > 7){
-        const errormessage = "There are only 7 days in a week, you overachiever! Increase the time per day instead.";
-        this.error = errormessage;
-        throw Error(errormessage);
+      try{
+        const numDays = this.daysToExercise;
+        if(numDays > 7){
+          throw Error("There are only 7 days in a week, you overachiever! Increase the time per day instead.");
+        }
+        else if(numDays < 1){
+          throw Error("You need at least one day for all those minutes per day you chose to mean anything...");
+        }
+        if(this.minsCardio < 0 || this.minsStrength < 0){
+          throw Error("You can't have negative exercise times!");
+        }
+        else if(this.minsCardio == 0 && this.minsStrength == 0){
+          throw Error("Your goal must include some amount of time for at least one exercise category.");
+        }
+        Planner.createGoal(this.minsCardio, this.minsStrength, numDays);
+      } catch(error) {
+        this.error = error.message;
       }
-      else if(numDays < 1){
-        const toofew = "You need at least one day for all those minutes per day you chose to mean anything...";
-        this.error = toofew;
-        throw Error(toofew);
-      }
-      Planner.createGoal(this.minsCardio, this.minsStrength, numDays);
+      
     },
     async search(keywords, page){
       try {
         const results = await Planner.searchPodcasts(keywords, page);
         this.searchResults = results.body.results;
       } catch (error) {
-        this.error = error;
+        this.error = error.message;
       }
     },
     addToPlaylist(resultIndex){
       const inPod = this.searchResults[resultIndex];
       const outPod = {title: inPod.podcast_title_original, episodeTitle: inPod.title_original, duration: inPod.audio_length_sec, audio: inPod.audio, coverArt: inPod.image};
-      // this.UserPlaylist.push(out_pod);
-      Planner.addToPlaylist(outPod);
+      try{
+        Planner.addToPlaylist(outPod);
+      } catch(error) {
+        this.error = error.message;
+      }
+      
     },
     addToWorkoutPlaylist(index){
-      this.WorkoutSchedule.Podcasts.push(JSON.parse(JSON.stringify(Planner.UserPlaylist[index])));
+      this.WorkoutSchedule.Podcasts.push(Planner.UserPlaylist[index]);
     },
     removeFromPlaylist(index){
       //Planner.UserPlaylist.splice(index, 1);
     },
-    // createWorkout(){
-    //   let exercisesToRemove = 0;
-    //   console.log(this.exerciseSelection.length);
-    //   for(let j = 0; j < this.exerciseSelection.length; j++){
-    //     let exTime = this.exerciseSelection[j].time*60;
-    //     let count = 0;
-    //     this.WorkoutSchedule.push({
-    //       exercise: JSON.parse(JSON.stringify(this.exerciseSelection[j])),
-    //       podcasts: [JSON.parse(JSON.stringify(this.workoutPodcasts[0]))]
-    //     });
-    //     let len = this.WorkoutSchedule.length-1;
-    //     let workoutPodsIndex = 1;
-    //     for(let i = 0; i < this.WorkoutSchedule[len].podcasts.length; i++){
-    //       if(this.WorkoutSchedule[len].podcasts[i].remaining >= exTime){
-    //         this.WorkoutSchedule[len].podcasts[i].remaining -= exTime;
-    //         this.workoutPodcasts[workoutPodsIndex-1].remaining -= exTime;
-    //         exercisesToRemove++;
-    //         break;
-    //       }
-    //       else { //exercise time is greater than remaining podcast time
-    //         exTime -= this.WorkoutSchedule[len].podcasts[i].remaining;
-    //         this.WorkoutSchedule[len].podcasts[i].remaining = 0;
-    //         if(workoutPodsIndex >= this.workoutPodcasts.length){
-    //           count++;
-    //           break;
-    //         }
-    //         this.WorkoutSchedule[len].podcasts.push(JSON.parse(JSON.stringify(this.workoutPodcasts[workoutPodsIndex++])));
-    //         count++;
-    //       }
-    //     }
-    //     if(exTime <= 0){
-    //         exercisesToRemove++;
-    //       }
-    //     else{
-    //       this.exerciseSelection[j].time = Math.floor(exTime/60);
-    //     }
-    //     this.workoutPodcasts.splice(0, count);
-    //     this.exerciseSelection.splice(0, exercisesToRemove);
-    //   }
-    //   Planner.addNewWorkouts(this.WorkoutSchedule);
-    //   console.log("workout podcasts:", this.workoutPodcasts);
-    //   console.log("workouts", this.WorkoutSchedule);
-    //   console.log("exercises: ", this.exerciseSelection);
-    // },
     createWorkout(){
-      Planner.addNewWorkout(this.WorkoutSchedule);
+      try{
+        Planner.addNewWorkout(this.WorkoutSchedule);
+      } catch(error) {
+        this.error = error.message;
+      }
+      
     },
     addExercise(exercise, i){
-      const ex = JSON.parse(JSON.stringify(exercise));
-      ex.time = this.exerciseTime[i];
-      if(this.maxWorkoutTimeSecs >= (ex.time*60 + this.totalExerciseTime)){
-        this.WorkoutSchedule.Exercises.push(ex);
+      try{
+        const ex = JSON.parse(JSON.stringify(exercise));
+        if(this.exerciseTime[i] > 0){
+          ex.time = this.exerciseTime[i];
+        }
+        else{
+          throw Error("You can't add an exercise with 0 time to a workout.");
+        }
+        if(this.maxWorkoutTimeSecs >= (ex.time*60 + this.totalExerciseTime)){
+          this.WorkoutSchedule.Exercises.push(ex);
+        }
+        else{
+         throw Error("You need more podcasts to add that exercise to your workout! Add another podcast to your workout first.");
+        }
+      } catch(error) {
+        this.error = error.message;
       }
-      else{
-        this.error = "You need more podcasts to add that exercise to your workout! Add another podcast to your workout first.";
-      }
+      
     },
     
   }

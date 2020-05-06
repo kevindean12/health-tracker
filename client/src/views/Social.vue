@@ -112,7 +112,7 @@
 import Social from "../models/Social.js";
 export default {
     created(){
-        Social.start();
+        Social.start(); 
     },
     data: () => ({
         friendSearch: "",
@@ -124,25 +124,40 @@ export default {
     }),
     methods: {
         async searchFriends(){
-            const results = await Social.searchFriends(this.friendSearch);
-            if(results){
-                this.friendResults = {
-                    Name: results.Name,
-                    Email: results.Email,
-                    UserID: results.UserID
-                };
+            try{
+                const results = await Social.searchFriends(this.friendSearch);
+                if(results){
+                    this.friendResults = {
+                        Name: results.Name,
+                        Email: results.Email,
+                        UserID: results.UserID
+                    };
+                }
+                else{
+                    throw Error("No results found.");
+                }
+            } catch(error) {
+                this.error = error.message;
             }
-            else{
-                this.error = "No results found.";
-            }
+            
         },
         async requestFriend(userID){
-            const results = await Social.requestFriend(userID);
-            this.requestedFriend = results.requestedFriend.Name;
+            try{
+                const results = await Social.requestFriend(userID);
+                this.requestedFriend = results.requestedFriend.Name;
+            } catch(error) {
+                this.error = error.message;
+            }
+            
         },
         async approveFriend(userID){
-            const results = await Social.approveFriend(userID);
-            this.newFriend = results.newFriend.Name;
+            try{
+                const results = await Social.approveFriend(userID);
+                this.newFriend = results.newFriend.Name;
+            } catch(error) {
+                this.error = error.message;
+            }
+            
         }
     }
 }

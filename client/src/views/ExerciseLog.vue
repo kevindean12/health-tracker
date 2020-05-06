@@ -148,32 +148,47 @@ export default {
             }
         },
         async shareGoal(GID){
-            const response = await Planner.share({type: "Goal", ID: GID});
-            if(response != "ok"){
-                this.error = response;
+            try{
+                const response = await Planner.share({type: "Goal", ID: GID});
+                if(response.message != "ok"){
+                    throw Error("Could not share that goal.");
+                }
+            } catch(error) {
+                this.error = error.message;
             }
+            
         },
         async shareWorkout(workoutID){
-            const response = await Planner.share({type: "Workout", ID: workoutID});
-            if(response != "ok"){
-                this.error = response;
+            try{
+                const response = await Planner.share({type: "Workout", ID: workoutID});
+                if(response.message != "ok"){
+                    throw Error("Could not share that workout.");
+                }
+            } catch(error) {
+                this.error = error.message;
             }
+            
         },
         async updateExercise(workoutID, jExercise, whichGoal){
-            const progress = await Planner.updateExerciseProgress(whichGoal, workoutID, jExercise, this.completed);
-            console.log("Progress object",progress);
-            this.completed = 0;
-            let congrats = "";
-            if(progress.Exercise){
-                congrats += "You completed an exercise!";
+            try{
+                const response = await Planner.updateExerciseProgress(whichGoal, workoutID, jExercise, this.completed);
+                console.log("Progress object",response.progress);
+                this.completed = 0;
+                let congrats = "";
+                if(response.progress.Exercise){
+                    congrats += "You completed an exercise!";
+                }
+                if(response.progress.Workout){
+                    congrats += " You completed a workout!";
+                }
+                if(response.progress.Goal){
+                    congrats += " You completed your goal!";
+                }
+                this.congrats = congrats;
+            } catch(error) {
+                this.error = error.message;
             }
-            if(progress.Workout){
-                congrats += " You completed a workout!";
-            }
-            if(progress.Goal){
-                congrats += " You completed your goal!";
-            }
-            this.congrats = congrats;
+            
         },
         updateTrack(index){
             this.currentAudio = this.availablePodcasts[index].audio;

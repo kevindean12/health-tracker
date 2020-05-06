@@ -116,8 +116,13 @@ async function GetUser(userID){
 }
 
 async function FindFriend(email){
-    const friend = await User.findOne({Email: email});
-    return {Name: friend.Name, Email: friend.Email, UserID: friend.UserID};
+    try{
+        const friend = await User.findOne({Email: email});
+        return {Name: friend.Name, Email: friend.Email, UserID: friend.UserID};
+    } catch(error) {
+        console.error(error);
+    }
+    
 }
 
 
