@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const axios = require('axios').default;
+const bcrypt = require('bcrypt');
+
+const SALT_ROUNDS = 12;
 
 const ExerciseSchema = new mongoose.Schema({
     name: {type: String},
@@ -89,8 +92,9 @@ async function Login(email, password){
         const response = await axios.get("https://www.googleapis.com/userinfo/v2/me", { headers: { Authorization: `Bearer ${password}` } });
         return RegisterOrLogin(response);
     }
-    const user = await User.findOne({"Email": email, "Password": password});
-    if(!user) throw Error('Invalid credentials');
+    const user = await User.findOne({"Email": email});
+    const good = await bcrypt.compare(password, user.Password);
+    if(!good) throw Error('Invalid credentials');
     return user;
 }
 
@@ -131,10 +135,11 @@ async function Register(name, email, password){
     if(!checkUser){
         let uid = await User.countDocuments({});
         uid++;
+        const hashed = await bcrypt.hash(password, SALT_ROUNDS);
         const newUser = new User({
             Name: name,
             Email: email,
-            Password: password,
+            Password: hashed,
             UserID: uid
         });
         return await newUser.save();
@@ -146,7 +151,8 @@ async function Register(name, email, password){
 async function AdminLogin(email, password){
     if(email != 'admin@soundjog.com') throw Error('Invalid credentials');
     const user = await User.findOne({Email: "admin@soundjog.com"});
-    if(user.Password != password) throw Error('Invalid credentials');
+    const good = await bcrypt.compare(password, user.Password);
+    if(!good) throw Error('Invalid credentials');
     return {Name: user.Name, Email: user.Email, UserID: user.UserID};
 }
 
@@ -161,10 +167,15 @@ async function ChangeName(userID, name){
     }
 }
 
-async function ChangePassword(userID, password){
+async function ChangePassword(userID, oldPassword, newPassword, confirmNew){
     const user = await User.findOne({UserID: userID});
     if(user){
-        user.Password = password;
+        if(newPassword != confirmNew) throw Error("Passwords don't match.");
+        if(!user.Password) throw Error("You don't need a password because you're signed in with Google!");
+        const good = await bcrypt.compare(oldPassword, user.Password);
+        if(!good) throw Error("Invalid current password");
+        const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
+        user.Password = hashed;
         return await user.save();
     }
     else throw Error("User not found");

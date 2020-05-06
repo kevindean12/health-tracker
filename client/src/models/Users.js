@@ -30,7 +30,11 @@ export async function ChangeName(name){
     return response;
 }
 
-export async function ChangePassword(password){
-    const response = await sjFetch('/users/changePassword', {password: password});
+export async function ChangePassword(oldPassword, newPassword, confirmNew){
+    const response = await sjFetch('/users/changePassword', {
+        oldPassword: oldPassword,
+        newPassword: newPassword,
+        confirmNew: confirmNew
+    });
     return response;
 }

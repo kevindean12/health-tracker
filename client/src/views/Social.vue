@@ -61,12 +61,13 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <div class="card-footer-item">
+                        <!-- future feature: -->
+                        <!-- <div class="card-footer-item">
                             <button class="button is-danger">Friendly challenge!</button>
                         </div>
                         <div class="card-footer-item">
                             <button class="button is-success">Encourage!</button>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

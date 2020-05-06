@@ -36,7 +36,7 @@ router
     })
     .post('/changePassword', async (req, res) => {
         try {
-            await users.ChangePassword(req.userID, req.body.password);
+            await users.ChangePassword(req.userID, req.body.oldPassword, req.body.newPassword, req.body.confirmNew);
             res.send({updated: true});
         } catch(error){
             res.status(401).send({message: error.message});

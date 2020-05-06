@@ -10,7 +10,6 @@
                         </div>
                     </div>
                     <div class="card-content">
-                        {{error}}
                         <ul>
                             <li>Set a weekly exercise goal.</li>
                             <li>Make a playlist.</li>
@@ -49,12 +48,13 @@
             </div>
         </div>
         <div v-if="edit == true">
+            {{error}}
             <div v-if="newName != ''">
                 <p class="content">Username updated to: {{newName}}</p>
             </div>
             <form>
                 <div class="field">
-                    <label class="label">Change Password</label>
+                    <label class="label">Current Password</label>
                     <p class="control has-icons-left">
                     <input class="input" type="password" placeholder="Password" v-model="password">
                     <span class="icon is-small is-left">
@@ -62,6 +62,33 @@
                     </span>
                     </p>
                 </div>
+                <div class="field">
+                    <label class="label">New Password</label>
+                    <p class="control has-icons-left">
+                    <input class="input" type="password" placeholder="Password" v-model="newPassword">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    </p>
+                </div>
+                <div class="field">
+                    <label class="label">Confirm New Password</label>
+                    <p class="control has-icons-left">
+                    <input class="input" type="password" placeholder="Password" v-model="confirmPassword">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    </p>
+                </div>
+                <div class="field">
+                    <p class="control">
+                        <button @click.prevent="changePassword" class="button is-success">
+                            Submit Password
+                        </button>
+                    </p>
+                </div>
+            </form>
+            <form>
                 <div class="field">
                     <label class="label">Change Name</label>
                     <p class="control has-icons-left has-icons-right">
@@ -76,8 +103,8 @@
                 </div>
                 <div class="field">
                     <p class="control">
-                        <button @click.prevent="submitChanges" class="button is-success">
-                            Submit changes
+                        <button @click.prevent="submitName" class="button is-success">
+                            Submit Name
                         </button>
                     </p>
                 </div>
@@ -96,6 +123,8 @@ export default {
         edit: false,
         name: '',
         password: '',
+        newPassword: '',
+        confirmPassword: '',
         newName: '',
         error: ''
     }),
@@ -103,7 +132,22 @@ export default {
         editProfile(){
             this.edit = true;
         },
-        async submitChanges(){
+        async changePassword(){
+            if(this.password != ''){
+                try{
+                    const success = await ChangePassword(this.password, this.newPassword, this.confirmPassword);
+                    if(success){
+                    this.error = "Success! Now redirecting you to login.";
+                    setTimeout(() => this.$router.push('/login'), 3000);
+                    
+                }
+                } catch(error) {
+                    this.error = error.message;
+                }
+                
+            }
+        },
+        async submitName(){
             if(this.name != ''){
                 try{
                     const newName = await ChangeName(this.name);
@@ -111,18 +155,6 @@ export default {
                 } catch(error){
                     this.error = error.message;
                 }
-                
-            }
-            if(this.password != ''){
-                try{
-                    const success = await ChangePassword(this.password);
-                    if(success){
-                    this.$router.push('/login');
-                }
-                } catch(error) {
-                    this.error = error;
-                }
-                
             }
         }
     }
