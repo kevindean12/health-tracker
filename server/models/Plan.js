@@ -87,7 +87,7 @@ async function getFullUser(userID){
 async function exerciseProgress(userID, GID, iWorkout, jExercise, completed){
     try{
         const user = await User.findOne({UserID: userID});
-        const workout = user.Workouts.find(x => x._id.str == iWorkout);
+        const workout = user.Workouts.find(x => x._id == iWorkout);
         const exercise = workout.Exercises[jExercise];
         exercise.time -= completed;
 

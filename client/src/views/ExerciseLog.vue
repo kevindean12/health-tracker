@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="title is-2 has-text-centered"> {{congrats}} </div>
+        <div v-if="congrats" class="notification is-success has-text-centered" id="congrats"> {{congrats}} <button @click="clearNote('c')" class="delete" ></button></div>
         <div class="box">
             <div class="title is-3 has-text-centered">Listen</div>
             <div class="columns">
@@ -15,16 +15,20 @@
                             {{pod.episodeTitle}}
                         </a>
                     </div>
+                    <div v-if="error" class="notification is-danger" id="error">{{error}} <button @click="clearNote('e')" class="delete"></button></div>
                 </div>
                 <div class="column is-one-quarter"></div>
             </div>
         </div>
         <div class="title is-3 has-text-centered">My Workouts</div>
+        <div v-if="goalShared" class="notification is-success" id="goal-share">Goal shared! <button @click="clearNote('g')" class="delete" ></button> </div>
+        <div v-if="workoutShared" class="notification is-success" id="workout-share">Workout shared! <button @click="clearNote('w')" class="delete"></button> </div>
         <div class="columns">
             <div class="column is-one-quarter">
                 <div v-for="(goal, i) in Planner.CurrentGoals" :key="goal._id" class="goal">
                     <div class="title is-4 has-text-centered">Goal #{{i+1}}</div>
-                    <button @click.prevent="setCurrentGoal(goal._id)" class="button">Work on this goal</button>
+                    <button v-if="currentGoal != goal._id" @click.prevent="setCurrentGoal(goal._id)" class="button">Work on this goal</button>
+                    <div v-else class="notification is-primary">Working on this goal</div>
                     <div>
                         <span class="icon fa-lg">
                             <i class="fas fa-dumbbell"></i> 
@@ -41,7 +45,6 @@
                             {{goal.Cardio.Amount}} mins cardio
                         </div>
                     </div>
-                    {{error}}
                     <button @click="shareGoal(goal._id)" class="button is-large is-link">
                         Share Goal!
                     </button>
@@ -50,7 +53,7 @@
             <div class="column is-three-quarters">
                 <div class="card" v-for="(workout, i) in Planner.WorkoutSchedule" :key="i">
                     <div class="title is-3 has-text-centered">Workout #{{i+1}}</div>
-                    <div v-for="(exercise, j) in workout.Exercises" :key="j">
+                    <div v-for="(exercise, j) in workout.Exercises" :key="exercise._id">
                         <header class="card-header">
                             <span class="card-header-title">
                             Exercise {{j+1}} 
@@ -73,9 +76,9 @@
                             </div>
                         </div>
                         <footer class="card-footer">
-                            <div class="dropdown" :id="j">
+                            <div class="dropdown" :id="exercise._id">
                                 <div class="dropdown-trigger">
-                                    <button class="button" @click="makeActive(j)" aria-haspopup="true" aria-controls="dropdown-menu2">
+                                    <button class="button" @click="makeActive(exercise._id)" aria-haspopup="true" aria-controls="dropdown-menu2">
                                     <span>Update Progress</span>
                                     <span class="icon is-small">
                                         <i class="fas fa-angle-down" aria-hidden="true"></i>
@@ -96,7 +99,6 @@
                         </footer>
                     </div>
                     <div id="workout-btn">
-                        {{error}}
                         <button @click="shareWorkout(workout._id)" class="button is-large is-link">
                             Share Workout!
                         </button>
@@ -121,7 +123,9 @@ export default {
         currentAudio: "",
         currentGoal: "",
         congrats: "",
-        error: ""
+        error: "",
+        goalShared: false,
+        workoutShared: false
     }),
     computed: {
         availablePodcasts: function(){
@@ -147,8 +151,21 @@ export default {
                 exerciseCard.classList.add("is-active");
             }
         },
+        clearNote(which){
+            switch(which){
+                case 'g': document.getElementById("goal-share").toggleAttribute("hidden");
+                    break;
+                case 'w': document.getElementById("workout-share").toggleAttribute("hidden");
+                    break;
+                case 'e': document.getElementById("error").toggleAttribute("hidden");
+                    break;
+                case 'c': document.getElementById("congrats").toggleAttribute("hidden");
+                default: break;
+            }
+        },
         async shareGoal(GID){
             try{
+                this.goalShared = true;
                 const response = await Planner.share({type: "Goal", ID: GID});
                 if(response.message != "ok"){
                     throw Error("Could not share that goal.");
@@ -160,6 +177,7 @@ export default {
         },
         async shareWorkout(workoutID){
             try{
+                this.workoutShared = true;
                 const response = await Planner.share({type: "Workout", ID: workoutID});
                 if(response.message != "ok"){
                     throw Error("Could not share that workout.");
@@ -171,6 +189,9 @@ export default {
         },
         async updateExercise(workoutID, jExercise, whichGoal){
             try{
+                if(!this.currentGoal){
+                    throw Error("Please select a goal to work on first!");
+                }
                 const response = await Planner.updateExerciseProgress(whichGoal, workoutID, jExercise, this.completed);
                 console.log("Progress object",response.progress);
                 this.completed = 0;

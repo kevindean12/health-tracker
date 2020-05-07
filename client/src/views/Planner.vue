@@ -12,7 +12,7 @@
             <form>
               <div class="field">
                 <div class="control">
-                  {{error}}
+                  <div v-if="error" class="notification is-danger" id="error">{{error}} <button @click="clearNote('e')" class="delete"></button></div>
                   <label class="label">Select minutes per day of cardio</label> 
                   <input type="number" placeholder="0" v-model="minsCardio">
                 </div>
@@ -41,6 +41,7 @@
             </form>
           </div>
           <div class="column">
+            <div v-if="goalCreated" class="notification is-success" id="goal-share">Goal created! <button @click="clearNote('g')" class="delete" ></button> </div>
             <p><strong>Your Goals:</strong></p>
             <div v-for="(goal, i) in Planner.CurrentGoals" :key="goal._id">
               <p><strong> Goal #{{i+1}} </strong> </p>
@@ -164,6 +165,7 @@
               Your Workout Schedule
             </div>
           </div>
+          <div v-if="workoutCreated" class="notification is-success" id="workout-share">Workout created! <button @click="clearNote('w')" class="delete" ></button> </div>
           <div class="card-content">
             <div v-for="(pod, i) in WorkoutSchedule.Podcasts" :key="i">
               <img :src="pod.coverArt" :alt="pod.title" class="image is-64x64">
@@ -204,6 +206,8 @@ export default {
     workoutPodcasts: [],
     WorkoutSchedule: {Exercises: [], Podcasts: []},
     error: '',
+    goalCreated: false,
+    workoutCreated: false,
     Planner,
   }),
   computed: {
@@ -224,8 +228,20 @@ export default {
     }
   },
   methods: {
+    clearNote(which){
+      switch(which){
+        case 'g': document.getElementById("goal-share").toggleAttribute("hidden");
+          break;
+        case 'w': document.getElementById("workout-share").toggleAttribute("hidden");
+          break;
+        case 'e': document.getElementById("error").toggleAttribute("hidden");
+          break;
+        default: break;
+      }
+    },
     createGoal(){
       try{
+        this.goalCreated = true;
         const numDays = this.daysToExercise;
         if(numDays > 7){
           throw Error("There are only 7 days in a week, you overachiever! Increase the time per day instead.");
@@ -275,6 +291,7 @@ export default {
     },
     createWorkout(){
       try{
+        this.workoutCreated = true;
         Planner.addNewWorkout(this.WorkoutSchedule);
       } catch(error) {
         this.error = error.message;

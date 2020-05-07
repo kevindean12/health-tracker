@@ -11,7 +11,7 @@
             </div>
             <div class="column is-half">
                 <div class="title is-2 has-text-centered">Shared With Me</div>
-                <div class="card" v-for="(goal, i) in Social.SharedWithMe.goals" :key="i">
+                <div class="card" v-for="goal in Social.SharedWithMe.goals" :key="goal._id">
                     <div class="card-header">
                         <div class="card-header-title"> {{goal.userName}}'s Goal </div>
                     </div>
@@ -34,15 +34,16 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <div class="card-footer-item">
+                        <!-- future feature -->
+                        <!-- <div class="card-footer-item">
                             <button class="button is-danger">Friendly challenge!</button>
                         </div>
                         <div class="card-footer-item">
                             <button class="button is-success">Encourage!</button>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
-                <div class="card" v-for="(workout, i) in Social.SharedWithMe.workouts" :key="i">
+                <div class="card" v-for="workout in Social.SharedWithMe.workouts" :key="workout._id">
                     <div class="card-header">
                         <div class="card-header-title"> {{workout.userName}}'s Workout </div>
                     </div>
@@ -75,7 +76,7 @@
                 <form @submit.prevent="searchFriends">
                     <div class="field">
                         <div class="control">
-                            <label class="label">Find Friends</label>
+                            <label class="label">Find Friends by Email</label>
                             <input type="email" placeholder="name@domain.com" v-model="friendSearch">
                         </div>
                     </div>
@@ -96,6 +97,7 @@
                     Sent friend request to {{requestedFriend}}!
                 </p>
                 <div>
+                    <h1 class="title is-5 spaced-title">Friend Requests</h1>
                     <div v-for="req in Social.FriendRequests" :key="req.UserID">
                         <p class="title is-5"> {{req.Name}} </p>
                         <button class="button" @click="approveFriend(req.UserID)">Approve</button>

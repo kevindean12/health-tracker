@@ -43,6 +43,9 @@ export default {
   methods: {
     async adminlogin(){
       try {
+        if(!this.email || !this.password){
+          throw Error("Credentials required.");
+        }
         await AdminLogin(this.email, this.password);
         this.$router.push('/admin');
       } catch (error) {
