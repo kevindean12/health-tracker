@@ -3,6 +3,9 @@ import sjFetch from './sjFetch';
 export let CurrentUser = null;
 
 export async function Login(email, password){
+    if(!email){
+        throw Error('Missing email address.');
+    }
     const user = await sjFetch('/users/login', {email, password});
     return CurrentUser = user;
 }
@@ -13,6 +16,9 @@ export async function AdminLogin(email, password){
 }
 
 export async function Register(name, email, password, confirmation){
+    if(!password || !email || !name){
+        throw Error('Please provide a name, email, and password');
+    }
     if(password != confirmation) {
         throw Error('Passwords do not match!');
     }
