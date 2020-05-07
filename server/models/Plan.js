@@ -1,6 +1,7 @@
 const User = require('./Users').User;
-const unirest = require('unirest');
+const axios = require('axios').default;
 const token = require('../models/listenapi').token;
+
 
 async function SubmitWorkout(userID, workout) {
     try{
@@ -36,18 +37,21 @@ async function addToPlaylist(userID, pod){
 
 async function searchPodcasts(keywords, page){
     //TODO need to sanitize user input first...
-    const terms = keywords.split(' ');
-    let input = '';
-    for(let i = 0; i < terms.length-1; i++){
-        input += `${terms[i]}%20`;
-    }
-    input += terms[terms.length-1];
-    let response = await unirest.get(`https://listen-api.listennotes.com/api/v2/search?q=${input}&sort_by_date=0&type=episode&offset=${page}&language=English&safe_mode=0`)
-        .header('X-ListenAPI-Key', token);
-    if(!response){
-        throw Error("No response from the podcast search");
-    }
-    return await response.toJSON();
+    const response = await axios({
+        method: 'get',
+        url: 'https://listen-api.listennotes.com/api/v2/search',
+        headers: {'X-ListenAPI-Key': token},
+        params: {
+            q: keywords,
+            sort_by_date: '0',
+            type: 'episode',
+            offset: page,
+            language: 'English',
+            safe_mode: '0'
+        }
+    });
+
+    return response;
 }
 
 

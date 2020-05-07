@@ -253,7 +253,7 @@ export default {
     async search(keywords, page){
       try {
         const results = await Planner.searchPodcasts(keywords, page);
-        this.searchResults = results.body.results;
+        this.searchResults = results;
       } catch (error) {
         this.error = error.message;
       }

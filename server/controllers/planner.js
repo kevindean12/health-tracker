@@ -36,7 +36,7 @@ router
     .post('/podsearch', async (req, res) => {
         try{
             const results = await planner.searchPodcasts(req.body.keywords, req.body.page);
-            res.send(results);
+            res.send(results.data.results);
         } catch(error) {
             res.status(404).send({message: "Podcast search returned no results."});
         }
