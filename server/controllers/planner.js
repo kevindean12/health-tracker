@@ -58,7 +58,14 @@ router
         } catch(error) {
             res.status(500).send({message: "Podcast could not be added."});
         }
-        
+    })
+    .post('/deletepod', async (req, res) => {
+        try{
+            const user = await planner.removeFromPlaylist(req.userID, req.body.episodeTitle);
+            res.send(user.Playlist);
+        } catch(error) {
+            res.status(500).send({message: "Problem deleting podcast."});
+        }
     })
 
 module.exports = router;

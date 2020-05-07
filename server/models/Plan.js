@@ -32,11 +32,21 @@ async function addToPlaylist(userID, pod){
     } catch(error) {
         console.error(error);
     }
-    
+}
+
+async function removeFromPlaylist(userID, episodeTitle){
+    try{
+        const user = await User.findOne({UserID: userID});
+        const pod = user.Playlist.find(x => x.episodeTitle == episodeTitle);
+        const index = user.Playlist.indexOf(pod);
+        user.Playlist.splice(index, 1);
+        return await user.save();
+    } catch(error) {
+        console.error(error);
+    }
 }
 
 async function searchPodcasts(keywords, page){
-    //TODO need to sanitize user input first...
     const response = await axios({
         method: 'get',
         url: 'https://listen-api.listennotes.com/api/v2/search',
@@ -116,5 +126,5 @@ async function exerciseProgress(userID, GID, iWorkout, jExercise, completed){
 module.exports = {
     SubmitWorkout, searchPodcasts,
     createGoal, addToPlaylist, exerciseProgress,
-    getFullUser
+    getFullUser, removeFromPlaylist
 };

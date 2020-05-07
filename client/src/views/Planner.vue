@@ -114,7 +114,6 @@
             </div>
           </div>
           <div class="card-content">
-            
               <p class="has-text-centered"><strong>Your playlist</strong></p>
               <div draggable="true" class="columns" v-for="(pod, i) in Planner.UserPlaylist" :key="i">
                 <div class="column is-2">
@@ -128,14 +127,14 @@
                 </div>
                 <div class="column is-4">
                   <div class="field">
-                    <div class="control"><button @click.prevent="addToWorkoutPlaylist(i)" class="button">Add to workout</button></div>
+                    <div class="control is-inline"><button @click.prevent="addToWorkoutPlaylist(i)" class="button">Add to workout</button></div>
+                    <button @click.prevent="removeFromPlaylist(pod.episodeTitle)" class="button is-inline del">
+                      <span class="icon has-text-danger">
+                        <i class="fas fa-minus-circle"></i>
+                      </span>
+                    </button>
                   </div>
                 </div>
-                <!-- <div class="column is-1">
-                  <div class="field">
-                    <div class="control"><button @click.prevent="removeFromPlaylist(i)" class="button">X</button></div>
-                  </div>
-                </div> -->
               </div>
               <hr>
               <p>Add exercises</p>
@@ -152,9 +151,6 @@
                     </div>
                   </div>
                 </div>
-                <!-- <div class="column">
-                  <p>Added exercise: {{exerciseSelection[exerciseSelection.length-1].name}} for {{exerciseTime}} minutes </p>
-                </div> -->
               </div>
           </div>
         </div>
@@ -190,9 +186,8 @@
 </template>
 
 <script>
-//import { searchPodcasts, Exercises, UserPlaylist, Podcast, createGoal } from "../models/Planner";
 import Planner from "../models/Planner";
-//import { WorkoutSchedule } from "../models/Log";
+
 export default {
   created(){
     Planner.start();
@@ -258,11 +253,11 @@ export default {
         this.error = error.message;
       }
     },
-    addToPlaylist(resultIndex){
+    async addToPlaylist(resultIndex){
       const inPod = this.searchResults[resultIndex];
       const outPod = {title: inPod.podcast_title_original, episodeTitle: inPod.title_original, duration: inPod.audio_length_sec, audio: inPod.audio, coverArt: inPod.image};
       try{
-        Planner.addToPlaylist(outPod);
+        await Planner.addToPlaylist(outPod);
       } catch(error) {
         this.error = error.message;
       }
@@ -271,8 +266,12 @@ export default {
     addToWorkoutPlaylist(index){
       this.WorkoutSchedule.Podcasts.push(Planner.UserPlaylist[index]);
     },
-    removeFromPlaylist(index){
-      //Planner.UserPlaylist.splice(index, 1);
+    async removeFromPlaylist(episodeTitle){
+      try {
+        await Planner.removeFromPlaylist(episodeTitle);
+      } catch(error) {
+        this.error = error.message;
+      }
     },
     createWorkout(){
       try{
@@ -319,5 +318,8 @@ export default {
 img {
   float: left;
   margin-right: 5em;
+}
+.del {
+  margin-left: 2em;
 }
 </style>

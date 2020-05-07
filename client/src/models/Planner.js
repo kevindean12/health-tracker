@@ -22,7 +22,6 @@ export default {
         
     },
     async searchPodcasts(keywords, page){
-        //TODO sanitize inputs
         const results = await sjFetch('/plan/podsearch', {keywords: keywords, page: page});
         return results;
     },
@@ -65,6 +64,14 @@ export default {
             console.error(error.message);
         }
         
+    },
+    async removeFromPlaylist(episodeTitle){
+        try{
+            const response = await sjFetch('/plan/deletepod', {episodeTitle: episodeTitle});
+            this.UserPlaylist = JSON.parse(JSON.stringify(response));
+        } catch(error) {
+            console.error(error.message);
+        }
     },
     async updateExerciseProgress(whichGoal, workoutID, jExercise, timeCompleted){
         try{
