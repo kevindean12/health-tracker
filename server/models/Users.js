@@ -85,6 +85,8 @@ const UserSchema = new mongoose.Schema({
     Friends: [{type: Number}]
 });
 
+UserSchema.index({Name: 'text'})
+
 const User = mongoose.model('User', UserSchema);
 
 async function Login(email, password){
@@ -127,6 +129,21 @@ async function FindFriend(email){
         console.error(error);
     }
     
+}
+
+async function FindFriendsByName(partname){
+    try{
+        console.log(partname);
+
+        const re = new RegExp("^" + partname);
+        const friends = await User.find({Name: re});
+        const out = [];
+        friends.forEach(x => out.push({Name: x.Name, Email: x.Email, UserID: x.UserID}));
+        console.log("friends results: ", friends);
+        return {friends: out};
+    } catch(error) {
+        console.error(error);
+    }
 }
 
 
@@ -181,4 +198,4 @@ async function ChangePassword(userID, oldPassword, newPassword, confirmNew){
     else throw Error("User not found");
 }
 
-module.exports = {Login, GetUser, Register, AdminLogin, FindFriend, ChangeName, ChangePassword, User, Exercise}
+module.exports = {Login, GetUser, Register, AdminLogin, FindFriend, ChangeName, ChangePassword, User, Exercise, FindFriendsByName}

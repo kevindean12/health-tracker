@@ -25,8 +25,8 @@ router
     })
     .post('/find', async (req, res) => {
         try{
-            const results = await users.FindFriend(req.body.email);
-            res.send({Name: results.Name, Email: results.Email, UserID: results.UserID});
+            const results = await users.FindFriendsByName(req.body.name);
+            res.send({friends: results.friends});
         } catch(error) {
             res.status(404).send({message: "Person not found."});
         }

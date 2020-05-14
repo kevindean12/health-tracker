@@ -1,9 +1,16 @@
 import sjFetch from "./sjFetch";
 
 export default {
-    async searchFriends(email){
-        const results = await sjFetch('/social/find', {email: email});
-        return {Name: results.Name, Email: results.Email, UserID: results.UserID};
+    // async searchFriends(email){
+    //     const results = await sjFetch('/social/find', {email: email});
+    //     return {Name: results.Name, Email: results.Email, UserID: results.UserID};
+    // },
+    async searchFriends(name){
+        console.log("name is: ", name);
+        const results = await sjFetch('/social/find', {name: name});
+        const out = [];
+        results.friends.forEach(x => out.push({Name: x.Name, Email: x.Email, UserID: x.UserID}));
+        return {friends: out}; 
     },
     FriendRequests: [],
     SharedWithMe: [],

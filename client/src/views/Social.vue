@@ -75,10 +75,35 @@
             <div class="column is-one-quarter sidebar">
                 <form @submit.prevent="searchFriends">
                     <div class="field">
-                        <div class="control">
+                        <!-- <div class="control">
                             <label class="label">Find Friends by Email</label>
                             <input type="email" placeholder="name@domain.com" v-model="friendSearch">
-                        </div>
+                        </div> -->
+                        <template>
+                            <section>
+                                <!-- <p class="content"><b>Selected:</b> {{ selected }}</p> -->
+                                <b-field label="Find friends by name">
+                                    <b-autocomplete
+                                        :data="friendResults"
+                                        placeholder="e.g. Kevin"
+                                        field="Name"
+                                        icon="magnify"
+                                        :loading="isFetching"
+                                        @typing="searchFriends"
+                                        @select="option => selected = option">
+                                        <template slot="empty">No results found</template>
+                                        <template slot-scope="props">
+                                            <div class="title is-4">
+                                                {{props.option.Name}}
+                                            </div>
+                                            <div class="title is-4">
+                                                {{props.option.Email}}
+                                            </div>
+                                        </template>
+                                    </b-autocomplete>
+                                </b-field>
+                            </section>
+                        </template>
                     </div>
                     <div class="field">
                         <div class="control">
@@ -89,8 +114,8 @@
                     </div>
                 </form>
                 {{error}}
-                <div v-if="friendResults != null">
-                    <p class="title is-4"> {{friendResults.Name}} </p>
+                <div v-if="selected != null">
+                    <p class="title is-4"> {{selected.Name}} </p>
                     <button class="button" @click="requestFriend(friendResults.UserID)">Request Friend</button>
                 </div>
                 <p class="content" v-if="requestedFriend != null">
@@ -113,6 +138,7 @@
 
 <script>
 import Social from "../models/Social.js";
+import debounce from 'lodash/debounce';
 export default {
     created(){
         Social.start(); 
@@ -120,30 +146,43 @@ export default {
     data: () => ({
         friendSearch: "",
         Social,
-        friendResults: null,
+        friendResults: [],
+        selected: null,
+        isFetching: false,
         error: "",
         newFriend: null,
         requestedFriend: null
     }),
     methods: {
-        async searchFriends(){
-            try{
-                const results = await Social.searchFriends(this.friendSearch);
-                if(results){
-                    this.friendResults = {
-                        Name: results.Name,
-                        Email: results.Email,
-                        UserID: results.UserID
-                    };
-                }
-                else{
-                    throw Error("No results found.");
-                }
-            } catch(error) {
-                this.error = error.message;
-            }
+        // async searchFriends(){
+        //     try{
+        //         const results = await Social.searchFriends(this.friendSearch);
+        //         if(results){
+        //             this.friendResults = {
+        //                 Name: results.Name,
+        //                 Email: results.Email,
+        //                 UserID: results.UserID
+        //             };
+        //         }
+        //         else{
+        //             throw Error("No results found.");
+        //         }
+        //     } catch(error) {
+        //         this.error = error.message;
+        //     }
             
-        },
+        // },
+        searchFriends: debounce( async function (name) {
+            try{
+                this.isFetching = true;
+                const results = await Social.searchFriends(name);
+                this.friendResults = [];
+                results.friends.forEach(x => this.friendResults.push(x));
+                this.isFetching = false;
+            } catch(error) {
+                this.error = error;
+            }
+        }),
         async requestFriend(userID){
             try{
                 const results = await Social.requestFriend(userID);
